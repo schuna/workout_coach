@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#022c22" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)" />
+  <rect x="18" y="18" width="476" height="476" rx="96" fill="none" stroke="#10b981" stroke-opacity="0.3" stroke-width="8" />
+  <!-- Dumbbell Icon -->
+  <g fill="url(#emerald)">
+    <!-- Bar -->
+    <rect x="106" y="236" width="300" height="40" rx="20" />
+    <!-- Center Grip Textured -->
+    <rect x="216" y="230" width="80" height="52" rx="8" fill="#10b981" />
+    <!-- Left Inner Weight Plate -->
+    <rect x="146" y="136" width="46" height="240" rx="16" />
+    <!-- Left Outer Weight Plate -->
+    <rect x="80" y="166" width="46" height="180" rx="14" />
+    <rect x="52" y="226" width="22" height="60" rx="8" />
+    <!-- Right Inner Weight Plate -->
+    <rect x="320" y="136" width="46" height="240" rx="16" />
+    <!-- Right Outer Weight Plate -->
+    <rect x="386" y="166" width="46" height="180" rx="14" />
+    <rect x="438" y="226" width="22" height="60" rx="8" />
+  </g>
+</svg>

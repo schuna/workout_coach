@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>웨이트 트레이닝 어시스턴트 | Workout Coach</title>
+  
+  <!-- PWA Meta Tags & Manifest -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <meta name="theme-color" content="#020617">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="웨이트코치">
+  <meta name="description" content="실시간 세트 가이드, 정밀 휴식 타이머, 구글 시트 연동 웨이트 트레이닝 코치">
+
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
@@ -71,6 +83,10 @@
       </div>
 
       <div class="flex items-center gap-1.5">
+        <button id="btn-pwa-install" type="button" class="hidden px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold transition-all flex items-center gap-1" title="홈 화면에 앱으로 설치">
+          <span>📲</span><span>앱 설치</span>
+        </button>
+
         <span id="wakelock-badge" class="hidden text-[9px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30 font-semibold flex items-center gap-1 animate-pulse" title="화면 꺼짐 방지 활성화됨">
           <span>⚡</span><span>화면 유지</span>
         </span>
@@ -183,6 +199,22 @@
             </div>
           </div>
 
+          <!-- Last Session History Reference Banner -->
+          <div id="plan-last-record-box" class="hidden mt-3 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1 text-[10px] text-slate-400 font-semibold">
+                <span>📅 최근 수행 기록</span>
+                <span id="plan-last-record-date" class="text-slate-500 font-mono-num">(2026-11-05)</span>
+              </div>
+              <div id="plan-last-record-summary" class="text-xs font-bold text-emerald-400 font-mono-num truncate mt-0.5">
+                최고 80kg · 총 4세트 · 3,200kg
+              </div>
+            </div>
+            <button id="btn-apply-last-record" type="button" class="py-1 px-2.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold whitespace-nowrap transition-all flex items-center gap-1 active:scale-95">
+              <span>⚡ 불러오기</span>
+            </button>
+          </div>
+
           <!-- Quick Autofill Tools -->
           <div class="mt-3 flex items-center justify-between gap-2 bg-slate-950/60 p-2 rounded-xl border border-slate-800/80">
             <button id="btn-quick-copy-1st" type="button" class="flex-1 py-1 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-200 transition-colors text-center">
@@ -284,6 +316,12 @@
                 <span id="active-target-reps">10</span><span class="text-sm font-normal text-slate-400 ml-1">회</span>
               </div>
             </div>
+          </div>
+
+          <div class="mt-2 text-center">
+            <span class="text-[10px] text-slate-400 font-mono-num bg-slate-950/80 px-2.5 py-0.5 rounded-full border border-slate-800 inline-block">
+              예상 1RM: <b id="active-est-1rm" class="text-emerald-400 font-bold">107 kg</b> (Epley)
+            </span>
           </div>
 
           <!-- Actual Weight & Reps Stepper: Perfectly Compact & Responsive -->
@@ -421,6 +459,16 @@
               <span class="text-[10px] text-slate-400 block">최고 중량</span>
               <span id="final-max-weight" class="font-mono-num text-base font-bold text-teal-400">80 kg</span>
             </div>
+          </div>
+
+          <!-- 1RM Highlight Banner -->
+          <div class="mt-2 bg-slate-950 p-2.5 rounded-xl border border-emerald-500/30 flex items-center justify-between px-3">
+            <div class="flex items-center gap-1.5">
+              <span class="text-sm">🏆</span>
+              <span class="text-xs font-bold text-slate-200">이번 세션 추정 1RM</span>
+              <span class="text-[9px] text-slate-500">(Epley 공식)</span>
+            </div>
+            <span id="final-est-1rm" class="font-mono-num text-base font-black text-emerald-400">107 kg</span>
           </div>
 
           <!-- Completed Sets Breakdown -->
@@ -1051,6 +1099,15 @@ function doPost(e) {
       });
     }
 
+    // 1RM Estimator (Epley Formula)
+    function calculate1RM(weight, reps) {
+      const wt = parseFloat(weight) || 0;
+      const rp = parseInt(reps, 10) || 0;
+      if (wt <= 0 || rp <= 0) return 0;
+      if (rp === 1) return Math.round(wt);
+      return Math.round(wt * (1 + rp / 30));
+    }
+
     function selectExercise(ex) {
       state.selectedExercise = ex;
       state.planSets = 4;
@@ -1084,9 +1141,43 @@ function doPost(e) {
         });
       }
 
+      // Check last workout history for this exercise
+      const lastSession = state.history.find(h => h.exercise === ex.name);
+      const lastBox = document.getElementById('plan-last-record-box');
+      if (lastSession && lastSession.sets && lastSession.sets.length > 0) {
+        state.lastRecordSession = lastSession;
+        if (lastBox) {
+          lastBox.classList.remove('hidden');
+          document.getElementById('plan-last-record-date').textContent = `(${lastSession.date || '최근'})`;
+          document.getElementById('plan-last-record-summary').textContent = `최고 ${lastSession.maxWeight || 0}kg · ${lastSession.totalSets || lastSession.sets.length}세트 · 볼륨 ${(lastSession.totalVolume || 0).toLocaleString()}kg`;
+        }
+      } else {
+        state.lastRecordSession = null;
+        if (lastBox) lastBox.classList.add('hidden');
+      }
+
       showStep('plan');
       renderPlanScreen();
       updateRestChipsUI();
+    }
+
+    function applyLastRecordToPlan() {
+      if (!state.lastRecordSession || !state.lastRecordSession.sets || state.lastRecordSession.sets.length === 0) {
+        showToast('불러올 이전 기록이 없습니다.', false);
+        return;
+      }
+      const prevSets = state.lastRecordSession.sets;
+      state.planSets = prevSets.length;
+      state.sets = prevSets.map((s, idx) => ({
+        setNum: idx + 1,
+        targetWeight: s.actualWeight || s.targetWeight || 0,
+        targetReps: s.actualReps || s.targetReps || 0,
+        actualWeight: s.actualWeight || s.targetWeight || 0,
+        actualReps: s.actualReps || s.targetReps || 0,
+        completed: false
+      }));
+      renderPlanScreen();
+      showToast(`지난 기록(${state.lastRecordSession.date}) 세트 구성을 적용했습니다! ⚡`, true);
     }
 
     function updateRestChipsUI() {
@@ -1207,6 +1298,10 @@ function doPost(e) {
 
       document.getElementById('actual-weight-input').value = curSet.actualWeight;
       document.getElementById('actual-reps-input').value = curSet.actualReps;
+
+      const est1RM = calculate1RM(curSet.actualWeight || curSet.targetWeight, curSet.actualReps || curSet.targetReps);
+      const est1rmEl = document.getElementById('active-est-1rm');
+      if (est1rmEl) est1rmEl.textContent = `${est1RM} kg`;
     }
 
     function completeCurrentSet() {
@@ -1301,10 +1396,13 @@ function doPost(e) {
 
       let totalVolume = 0;
       let maxWeight = 0;
+      let maxEst1RM = 0;
       state.sets.forEach(s => {
         if (s.completed) {
           totalVolume += (s.actualWeight * s.actualReps);
           if (s.actualWeight > maxWeight) maxWeight = s.actualWeight;
+          const oneRm = calculate1RM(s.actualWeight, s.actualReps);
+          if (oneRm > maxEst1RM) maxEst1RM = oneRm;
         }
       });
 
@@ -1317,6 +1415,7 @@ function doPost(e) {
         totalSets: state.sets.filter(s => s.completed).length,
         totalVolume,
         maxWeight,
+        estimated1RM: maxEst1RM,
         duration: durationFormatted,
         sets: state.sets.map(s => ({ ...s }))
       };
@@ -1334,6 +1433,8 @@ function doPost(e) {
       document.getElementById('final-sets-count').textContent = `${sessionLog.totalSets} / ${state.sets.length}`;
       document.getElementById('final-total-volume').textContent = `${totalVolume.toLocaleString()} kg`;
       document.getElementById('final-max-weight').textContent = `${maxWeight} kg`;
+      const final1rmEl = document.getElementById('final-est-1rm');
+      if (final1rmEl) final1rmEl.textContent = `${maxEst1RM} kg`;
 
       const breakdown = document.getElementById('final-sets-breakdown');
       breakdown.innerHTML = '';
@@ -1897,11 +1998,14 @@ function doPost(e) {
           `;
         }
 
+        const est1rm = h.estimated1RM || (h.maxWeight ? calculate1RM(h.maxWeight, 8) : 0);
+
         item.innerHTML = `
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">${h.category || '웨이트'}</span>
               <h3 class="text-xs font-bold text-white">${h.exercise}</h3>
+              ${est1rm > 0 ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-900 text-teal-300 font-mono-num border border-teal-500/20">1RM ~${est1rm}kg</span>` : ''}
             </div>
             <span class="text-[10px] text-slate-400 font-mono-num">${h.date} ${h.time}</span>
           </div>
@@ -2107,26 +2211,47 @@ function doPost(e) {
         showToast('피라미드가 적용되었습니다.', true);
       });
 
+      // Apply Last Record to Plan Button
+      const btnApplyLast = document.getElementById('btn-apply-last-record');
+      if (btnApplyLast) {
+        btnApplyLast.addEventListener('click', () => {
+          applyLastRecordToPlan();
+        });
+      }
+
       document.getElementById('btn-start-workout').addEventListener('click', () => {
         startWorkoutSession();
       });
 
+      const updateActive1RM = () => {
+        const wt = parseFloat(document.getElementById('actual-weight-input').value) || 0;
+        const rp = parseInt(document.getElementById('actual-reps-input').value, 10) || 0;
+        const est1rmEl = document.getElementById('active-est-1rm');
+        if (est1rmEl) est1rmEl.textContent = `${calculate1RM(wt, rp)} kg`;
+      };
+
       document.getElementById('btn-adj-wt-minus').addEventListener('click', () => {
         const inp = document.getElementById('actual-weight-input');
         inp.value = Math.max(0, (parseFloat(inp.value) || 0) - 2.5);
+        updateActive1RM();
       });
       document.getElementById('btn-adj-wt-plus').addEventListener('click', () => {
         const inp = document.getElementById('actual-weight-input');
         inp.value = (parseFloat(inp.value) || 0) + 2.5;
+        updateActive1RM();
       });
       document.getElementById('btn-adj-rep-minus').addEventListener('click', () => {
         const inp = document.getElementById('actual-reps-input');
         inp.value = Math.max(1, (parseInt(inp.value, 10) || 0) - 1);
+        updateActive1RM();
       });
       document.getElementById('btn-adj-rep-plus').addEventListener('click', () => {
         const inp = document.getElementById('actual-reps-input');
         inp.value = (parseInt(inp.value, 10) || 0) + 1;
+        updateActive1RM();
       });
+      document.getElementById('actual-weight-input').addEventListener('input', updateActive1RM);
+      document.getElementById('actual-reps-input').addEventListener('input', updateActive1RM);
 
       // Rest Presets Click Event in Step-Plan
       const restChips = document.querySelectorAll('.rest-chip');
@@ -2398,6 +2523,43 @@ function doPost(e) {
       initEvents();
       if (state.gasWebhookUrl) {
         fetchWorkoutHistoryFromSheets();
+      }
+
+      // PWA Install Prompt Handling
+      let deferredPrompt = null;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btnInstall = document.getElementById('btn-pwa-install');
+        if (btnInstall) btnInstall.classList.remove('hidden');
+      });
+
+      const btnPwa = document.getElementById('btn-pwa-install');
+      if (btnPwa) {
+        btnPwa.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+              btnPwa.classList.add('hidden');
+              showToast('홈 화면에 앱이 추가되었습니다! 📲', true);
+            }
+            deferredPrompt = null;
+          } else {
+            showToast('브라우저 메뉴에서 [홈 화면에 추가]를 선택해주세요.', true);
+          }
+        });
+      }
+
+      // Register PWA Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').then((reg) => {
+            console.log('PWA ServiceWorker registered:', reg.scope);
+          }).catch((err) => {
+            console.warn('PWA ServiceWorker registration failed:', err);
+          });
+        });
       }
     });
   </script>
