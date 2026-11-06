@@ -62,12 +62,10 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Sound Toggle Button -->
         <button id="btn-sound-toggle" type="button" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700" title="사운드 알림 켜기/끄기">
           <span id="sound-icon" class="text-sm">🔔</span>
         </button>
 
-        <!-- Google Sheet Link -->
         <a id="btn-open-sheet" href="https://docs.google.com/spreadsheets/d/1s31Mysp47Xv43AR_hIThAppiHsoAJkvAw2cgy6CET5I/edit" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-all">
           <span>구글 시트 기록부</span>
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
@@ -209,7 +207,7 @@
               </div>
             </div>
 
-            <!-- PROCEED BUTTON (명령: 진행) -->
+            <!-- PROCEED BUTTON -->
             <button id="btn-start-workout" type="button" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-extrabold text-base tracking-wide shadow-lg shadow-emerald-500/25 transition-all transform active:scale-95 flex items-center justify-center gap-2">
               <span>진행 (운동 시작)</span>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -367,7 +365,6 @@
             </p>
           </div>
 
-          <!-- KPI Cards -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8">
             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center">
               <span class="text-xs text-slate-400 block mb-1">총 훈련 시간</span>
@@ -387,7 +384,6 @@
             </div>
           </div>
 
-          <!-- Completed Sets Breakdown -->
           <div class="mt-8">
             <h3 class="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
               <span>📋 세트별 수행 결과</span>
@@ -435,7 +431,7 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- VIEW 2: HISTORY & STATS (WITH GOOGLE SHEETS FETCH) -->
+    <!-- VIEW 2: HISTORY & STATS -->
     <!-- ============================================== -->
     <div id="view-history" class="hidden space-y-6">
       <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
@@ -445,30 +441,27 @@
               <h2 class="text-2xl font-extrabold text-white">
                 운동 기록 및 통계
               </h2>
-              <span id="history-sync-indicator" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-medium">동기화 대기중</span>
+              <span id="history-sync-indicator" class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full font-medium">동기화 대기중</span>
             </div>
             <p class="text-slate-400 text-xs mt-1">
               구글 스프레드시트([운동 기록])의 모든 데이터와 로컬 세션을 통합하여 표시합니다.
             </p>
           </div>
           
-          <!-- ACTION BUTTONS: FETCH FROM SHEETS -->
           <div class="flex flex-wrap items-center gap-2">
-            <!-- PULL / SYNC FROM GOOGLE SHEETS BUTTON -->
-            <button id="btn-fetch-sheets" type="button" class="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all flex items-center gap-1.5">
+            <button id="btn-fetch-sheets" type="button" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all flex items-center gap-1.5">
               <span id="fetch-spinner" class="hidden">🔄</span>
               <span id="fetch-text">🔄 구글 시트 데이터 가져오기</span>
             </button>
-            <button id="btn-export-csv" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700">
+            <button id="btn-export-csv" type="button" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700">
               CSV 내보내기
             </button>
-            <button id="btn-clear-history" type="button" class="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold border border-rose-500/20">
+            <button id="btn-clear-history" type="button" class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold border border-rose-500/20">
               초기화
             </button>
           </div>
         </div>
 
-        <!-- Sync Notice Banner if no URL -->
         <div id="history-no-url-alert" class="hidden mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center justify-between gap-3">
           <div class="flex items-center gap-2">
             <span>ℹ️</span>
@@ -537,9 +530,14 @@
 
         <!-- 3-step setup guide with full GET & POST script -->
         <div class="mt-8 space-y-4">
-          <h3 class="text-sm font-bold text-white flex items-center gap-2">
-            <span>📖 1분 만에 구글 시트 양방향 연동 URL 만들기</span>
-          </h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span>📖 구글 시트 양방향 연동 Apps Script 최신 코드</span>
+            </h3>
+            <button id="btn-copy-gas-code" type="button" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 font-bold text-xs transition-colors">
+              전체 코드 복사
+            </button>
+          </div>
 
           <div class="space-y-3 text-xs text-slate-300">
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
@@ -550,56 +548,73 @@
             </div>
 
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-              <div class="flex items-center justify-between mb-2">
-                <div>
-                  <b class="text-emerald-400">2단계: 아래 스크립트 코드 붙여넣기 (가져오기 doGet + 저장하기 doPost)</b>
-                  <span class="text-[10px] text-slate-400 block mt-0.5">읽기/쓰기가 모두 지원되는 양방향 스크립트입니다.</span>
-                </div>
-                <button id="btn-copy-gas-code" type="button" class="text-emerald-400 hover:text-emerald-300 font-semibold text-[11px] bg-slate-800 px-2.5 py-1 rounded">
-                  코드 전체 복사
-                </button>
-              </div>
+              <b class="text-emerald-400">2단계: 아래 최신 스크립트 코드로 교체 붙여넣기</b>
+              <p class="mt-0.5 text-slate-400 mb-2">
+                시트의 서식과 텍스트를 정확히 인식하는 getDisplayValues()가 적용된 최신 스크립트입니다:
+              </p>
               <pre class="bg-slate-900 p-3 rounded-lg text-slate-300 font-mono-num text-[11px] overflow-x-auto border border-slate-800 max-h-56"><code>// 1. 구글 시트에서 운동 기록 가져오기 (GET)
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("운동 기록");
     if (!sheet) {
-      return ContentService.createTextOutput(JSON.stringify({ result: "error", message: "Sheet not found" })).setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(JSON.stringify({ result: "error", message: "'운동 기록' 시트를 찾을 수 없습니다." })).setMimeType(ContentService.MimeType.JSON);
     }
-    var data = sheet.getDataRange().getValues();
+    
+    // getDisplayValues()를 사용하여 셀에 표시된 텍스트 그대로 정확히 읽어옵니다
+    var displayData = sheet.getDataRange().getDisplayValues();
     var rows = [];
-    for (var i = 0; i < data.length; i++) {
-      var row = data[i];
-      var rawDate = row[0];
-      if (rawDate && (rawDate instanceof Date || String(rawDate).match(/^\d{4}-\d{2}-\d{2}/))) {
-        var dateStr = (rawDate instanceof Date) ? Utilities.formatDate(rawDate, "Asia/Seoul", "yyyy-MM-dd") : String(rawDate).substring(0, 10);
-        var timeStr = (row[1] instanceof Date) ? Utilities.formatDate(row[1], "Asia/Seoul", "HH:mm") : String(row[1] || "").substring(0, 5);
-        var exName = String(row[2] || "").trim();
-        if (exName && exName !== "운동 종목") {
-          rows.push({
-            date: dateStr,
-            time: timeStr,
-            exercise: exName,
-            setNum: parseInt(row[3], 10) || 1,
-            targetWeight: parseFloat(row[4]) || 0,
-            targetReps: parseInt(row[5], 10) || 0,
-            actualWeight: parseFloat(row[6]) || 0,
-            actualReps: parseInt(row[7], 10) || 0,
-            volume: parseFloat(row[8]) || ((parseFloat(row[6])||0) * (parseInt(row[7],10)||0)),
-            duration: String(row[9] || "00:00:00"),
-            notes: String(row[10] || "")
-          });
-        }
+    
+    for (var i = 0; i < displayData.length; i++) {
+      var row = displayData[i];
+      var dateStr = String(row[0] || "").trim();
+      var exName = String(row[2] || "").trim();
+      
+      // 헤더, 타이틀, 빈 행 건너뛰기
+      if (!dateStr || !exName || exName === "운동 종목" || dateStr === "날짜") continue;
+      
+      // 날짜 형태(연도 4자리 포함) 확인
+      if (/\d{4}/.test(dateStr)) {
+        var timeStr = String(row[1] || "").trim();
+        var setNum = parseInt(row[3], 10) || (rows.length + 1);
+        var targetWt = parseFloat(String(row[4]).replace(/[^0-9.]/g, '')) || 0;
+        var targetReps = parseInt(String(row[5]).replace(/[^0-9]/g, ''), 10) || 0;
+        var actualWt = parseFloat(String(row[6]).replace(/[^0-9.]/g, '')) || targetWt;
+        var actualReps = parseInt(String(row[7]).replace(/[^0-9]/g, ''), 10) || targetReps;
+        var volume = parseFloat(String(row[8]).replace(/[^0-9.]/g, '')) || (actualWt * actualReps);
+        var duration = String(row[9] || "").trim();
+        var notes = String(row[10] || "").trim();
+        
+        rows.push({
+          date: dateStr,
+          time: timeStr,
+          exercise: exName,
+          setNum: setNum,
+          targetWeight: targetWt,
+          targetReps: targetReps,
+          actualWeight: actualWt,
+          actualReps: actualReps,
+          volume: volume,
+          duration: duration,
+          notes: notes
+        });
       }
     }
-    return ContentService.createTextOutput(JSON.stringify({ result: "success", rows: rows })).setMimeType(ContentService.MimeType.JSON);
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      result: "success",
+      count: rows.length,
+      rows: rows
+    })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      result: "error",
+      error: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-// 2. 구글 시트에 새 운동 기록 저장하기 (POST)
+// 2. 구글 시트에 새 운동 기록 추가하기 (POST)
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("운동 기록");
@@ -617,13 +632,12 @@ function doPost(e) {
             </div>
 
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-              <b class="text-emerald-400">3단계: 웹 앱으로 배포하기</b>
+              <b class="text-emerald-400">3단계: 배포 업데이트 (중요!)</b>
               <ol class="list-decimal list-inside mt-1.5 space-y-1 text-slate-400">
-                <li>우측 상단 <b>배포 > 새 배포</b>를 클릭합니다. (이미 배포하셨다면 <b>배포 관리 > 새 버전 배포</b>)</li>
-                <li>유형 설정(톱니바퀴)에서 <b>웹 앱</b>을 선택합니다.</li>
-                <li>다음 사용자 계정으로 실행: <b>나(내 계정)</b> 선택</li>
-                <li>액세스 권한: <b>모든 사용자(Anyone)</b> 선택 후 [배포] 클릭</li>
-                <li>생성된 <b>웹 앱 URL</b>을 복사하여 위 입력창에 붙여넣고 [저장하기]를 누르면 완료!</li>
+                <li>우측 상단 <b>배포 > 배포 관리</b>를 클릭합니다.</li>
+                <li>오른쪽 상단 <b>연필 아이콘(수정)</b>을 누릅니다.</li>
+                <li>버전 드롭다운에서 <b>[신규 버전]</b>을 반드시 선택하고 <b>[배포]</b>를 누릅니다!</li>
+                <li>(URL은 바뀌지 않으며, 이제 새로운 getDisplayValues 코드가 적용됩니다.)</li>
               </ol>
             </div>
           </div>
@@ -1234,10 +1248,9 @@ function doPost(e) {
 
       showToast('구글 시트에서 운동 기록을 불러오는 중입니다...', true);
 
-      // Call GET on Google Apps Script endpoint
       fetch(state.gasWebhookUrl)
         .then(response => {
-          if (!response.ok) throw new Error('Network response was not ok');
+          if (!response.ok) throw new Error('HTTP ' + response.status);
           return response.json();
         })
         .then(res => {
@@ -1246,14 +1259,22 @@ function doPost(e) {
           fetchSpinner.classList.add('hidden');
           fetchSpinner.classList.remove('inline-block', 'spinning');
 
+          console.log('Sheet API response:', res);
+
           if (res.result === 'success' && Array.isArray(res.rows)) {
-            integrateSheetRowsIntoHistory(res.rows);
-            showToast(`구글 시트에서 총 ${res.rows.length}개 세트 기록을 동기화했습니다! 🎉`, true);
-            syncIndicator.textContent = '구글 시트 동기화 완료 ✓';
-            syncIndicator.className = 'text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-semibold';
+            if (res.rows.length === 0) {
+              showToast('구글 시트에 저장된 운동 행 데이터가 0건입니다.', false);
+              syncIndicator.textContent = '시트 데이터 0건';
+              syncIndicator.className = 'text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-medium';
+            } else {
+              integrateSheetRowsIntoHistory(res.rows);
+              showToast(`구글 시트에서 총 ${res.rows.length}개 세트 기록을 동기화했습니다! 🎉`, true);
+              syncIndicator.textContent = '구글 시트 동기화 완료 ✓';
+              syncIndicator.className = 'text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-semibold';
+            }
           } else {
-            showToast('구글 시트 데이터 형식을 확인하지 못했습니다: ' + (res.message || res.error || ''), false);
-            syncIndicator.textContent = '동기화 실패';
+            showToast('구글 시트 데이터 응답 오류: ' + (res.message || res.error || '형식 불일치'), false);
+            syncIndicator.textContent = '동기화 오류';
             syncIndicator.className = 'text-[10px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full font-medium';
           }
         })
@@ -1263,60 +1284,66 @@ function doPost(e) {
           fetchText.textContent = '🔄 구글 시트 데이터 가져오기';
           fetchSpinner.classList.add('hidden');
           fetchSpinner.classList.remove('inline-block', 'spinning');
-          showToast('구글 시트 데이터 가져오기 실패. Apps Script의 doGet 함수가 배포되었는지 확인해주세요.', false);
+          showToast('동기화 실패: Apps Script에 doGet 최신 코드가 [신규 버전]으로 배포되었는지 확인해주세요.', false);
           syncIndicator.textContent = '연결 오류';
           syncIndicator.className = 'text-[10px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full font-medium';
         });
     }
 
-    // Convert individual rows from Google Sheet into structured Workout Sessions
+    // Convert rows from Google Sheet into grouped Workout Sessions
     function integrateSheetRowsIntoHistory(sheetRows) {
-      if (!sheetRows || sheetRows.length === 0) {
-        return;
-      }
+      if (!sheetRows || sheetRows.length === 0) return;
 
-      // Group rows by Date + Exercise + (approximate session grouping)
-      // A session is grouped by: date + exercise + (time bucket or consecutive sets)
       const sessionMap = new Map();
 
       sheetRows.forEach(row => {
-        // Group key: date + exercise (e.g. "2026-11-06__스쿼트")
-        // If there are different times on same day, let's group by date + exercise + hour
-        const hour = (row.time && row.time.length >= 2) ? row.time.substring(0, 2) : '00';
-        const groupKey = `${row.date}__${row.exercise}__${hour}`;
+        // Normalise date and exercise
+        const d = String(row.date || '').trim();
+        const ex = String(row.exercise || '').trim();
+        if (!d || !ex) return;
+
+        // Group key: Date + Exercise (e.g. "2026-11-06__스쿼트")
+        const groupKey = `${d}__${ex}`;
 
         if (!sessionMap.has(groupKey)) {
-          // Detect category from exercise name
           let cat = '웨이트';
-          const matchEx = state.exercises.find(e => e.name === row.exercise);
+          const matchEx = state.exercises.find(e => e.name === ex);
           if (matchEx) cat = matchEx.category;
-          else if (row.exercise.includes('스쿼트') || row.exercise.includes('레그')) cat = '하체';
-          else if (row.exercise.includes('프레스') || row.exercise.includes('플라이')) cat = '가슴';
-          else if (row.exercise.includes('데드') || row.exercise.includes('로우') || row.exercise.includes('풀업')) cat = '등';
+          else if (ex.includes('스쿼트') || ex.includes('레그')) cat = '하체';
+          else if (ex.includes('프레스') || ex.includes('플라이')) cat = '가슴';
+          else if (ex.includes('데드') || ex.includes('로우') || ex.includes('풀업')) cat = '등';
+          else if (ex.includes('컬')) cat = '팔';
 
           sessionMap.set(groupKey, {
-            id: 'sheet_' + groupKey.replace(/[^a-zA-Z0-9]/g, '_'),
-            date: row.date,
-            time: row.time || '12:00',
-            exercise: row.exercise,
+            id: 'sess_' + groupKey.replace(/[^a-zA-Z0-9가-힣]/g, '_'),
+            date: d,
+            time: row.time || '12:05',
+            exercise: ex,
             category: cat,
-            duration: row.duration || '00:10:00',
+            duration: row.duration && row.duration !== '' ? row.duration : '00:07:55',
             sets: []
           });
         }
 
         const sess = sessionMap.get(groupKey);
+        if (row.duration && row.duration !== '' && sess.duration === '00:07:55') {
+          sess.duration = row.duration;
+        }
+
+        const setNum = parseInt(row.setNum, 10) || (sess.sets.length + 1);
+        const actWt = parseFloat(row.actualWeight) || parseFloat(row.targetWeight) || 0;
+        const actReps = parseInt(row.actualReps, 10) || parseInt(row.targetReps, 10) || 0;
+
         sess.sets.push({
-          setNum: row.setNum || (sess.sets.length + 1),
-          targetWeight: row.targetWeight || row.actualWeight,
-          targetReps: row.targetReps || row.actualReps,
-          actualWeight: row.actualWeight,
-          actualReps: row.actualReps,
+          setNum: setNum,
+          targetWeight: parseFloat(row.targetWeight) || actWt,
+          targetReps: parseInt(row.targetReps, 10) || actReps,
+          actualWeight: actWt,
+          actualReps: actReps,
           completed: true
         });
       });
 
-      // Calculate totals for each session
       const parsedSessions = [];
       sessionMap.forEach(sess => {
         sess.totalSets = sess.sets.length;
@@ -1331,7 +1358,6 @@ function doPost(e) {
         parsedSessions.push(sess);
       });
 
-      // Sort newest first
       parsedSessions.sort((a, b) => {
         const tA = new Date(`${a.date}T${a.time || '00:00'}`).getTime() || 0;
         const tB = new Date(`${b.date}T${b.time || '00:00'}`).getTime() || 0;
@@ -1343,7 +1369,6 @@ function doPost(e) {
       renderHistoryView();
     }
 
-    // Copy TSV
     function copyForGoogleSheets() {
       const curSession = state.history[0];
       if (!curSession) {
@@ -1426,7 +1451,6 @@ function doPost(e) {
 
       if (viewName === 'history') {
         renderHistoryView();
-        // Check if GAS URL is set
         const alertBox = document.getElementById('history-no-url-alert');
         if (!state.gasWebhookUrl) {
           alertBox.classList.remove('hidden');
@@ -1470,6 +1494,21 @@ function doPost(e) {
       state.history.forEach((h) => {
         const item = document.createElement('div');
         item.className = 'p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2';
+        
+        let setsDetailHtml = '';
+        if (h.sets && h.sets.length > 0) {
+          setsDetailHtml = `
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800/80">
+              ${h.sets.map(s => `
+                <div class="bg-slate-900/80 px-2.5 py-1.5 rounded-lg text-[11px] font-mono-num flex items-center justify-between">
+                  <span class="text-slate-400">#${s.setNum}</span>
+                  <span class="text-emerald-400 font-bold">${s.actualWeight}kg × ${s.actualReps}</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
         item.innerHTML = `
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -1485,6 +1524,8 @@ function doPost(e) {
             <span>최고 중량: <b class="text-teal-400">${h.maxWeight} kg</b></span>
             <span>시간: <b class="text-slate-200">${h.duration}</b></span>
           </div>
+
+          ${setsDetailHtml}
         `;
         container.appendChild(item);
       });
@@ -1532,7 +1573,6 @@ function doPost(e) {
       document.getElementById('tab-nav-settings').addEventListener('click', () => switchView('settings'));
       document.getElementById('tab-nav-exercises').addEventListener('click', () => switchView('exercises'));
 
-      // Fetch from sheets
       document.getElementById('btn-fetch-sheets').addEventListener('click', () => {
         fetchWorkoutHistoryFromSheets();
       });
@@ -1672,7 +1712,6 @@ function doPost(e) {
         showStep('select');
       });
 
-      // Settings: GAS Webhook save
       document.getElementById('btn-save-gas-url').addEventListener('click', () => {
         const urlInput = document.getElementById('gas-webhook-url');
         const url = urlInput.value.trim();
@@ -1686,8 +1725,7 @@ function doPost(e) {
         }
         state.gasWebhookUrl = url;
         try { localStorage.setItem('wt_gas_url', url); } catch (e) {}
-        showToast('Google Apps Script URL이 저장되었습니다! 이제 데이터 가져오기가 가능합니다. 🎉', true);
-        // Automatically fetch once saved!
+        showToast('Google Apps Script URL이 저장되었습니다! 🎉', true);
         fetchWorkoutHistoryFromSheets();
       });
 
@@ -1698,41 +1736,63 @@ function doGet(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("운동 기록");
     if (!sheet) {
-      return ContentService.createTextOutput(JSON.stringify({ result: "error", message: "Sheet not found" })).setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(JSON.stringify({ result: "error", message: "'운동 기록' 시트를 찾을 수 없습니다." })).setMimeType(ContentService.MimeType.JSON);
     }
-    var data = sheet.getDataRange().getValues();
+    
+    // getDisplayValues()를 사용하여 셀에 표시된 텍스트 그대로 정확히 읽어옵니다
+    var displayData = sheet.getDataRange().getDisplayValues();
     var rows = [];
-    for (var i = 0; i < data.length; i++) {
-      var row = data[i];
-      var rawDate = row[0];
-      if (rawDate && (rawDate instanceof Date || String(rawDate).match(/^\\d{4}-\\d{2}-\\d{2}/))) {
-        var dateStr = (rawDate instanceof Date) ? Utilities.formatDate(rawDate, "Asia/Seoul", "yyyy-MM-dd") : String(rawDate).substring(0, 10);
-        var timeStr = (row[1] instanceof Date) ? Utilities.formatDate(row[1], "Asia/Seoul", "HH:mm") : String(row[1] || "").substring(0, 5);
-        var exName = String(row[2] || "").trim();
-        if (exName && exName !== "운동 종목") {
-          rows.push({
-            date: dateStr,
-            time: timeStr,
-            exercise: exName,
-            setNum: parseInt(row[3], 10) || 1,
-            targetWeight: parseFloat(row[4]) || 0,
-            targetReps: parseInt(row[5], 10) || 0,
-            actualWeight: parseFloat(row[6]) || 0,
-            actualReps: parseInt(row[7], 10) || 0,
-            volume: parseFloat(row[8]) || ((parseFloat(row[6])||0) * (parseInt(row[7],10)||0)),
-            duration: String(row[9] || "00:00:00"),
-            notes: String(row[10] || "")
-          });
-        }
+    
+    for (var i = 0; i < displayData.length; i++) {
+      var row = displayData[i];
+      var dateStr = String(row[0] || "").trim();
+      var exName = String(row[2] || "").trim();
+      
+      // 헤더, 타이틀, 빈 행 건너뛰기
+      if (!dateStr || !exName || exName === "운동 종목" || dateStr === "날짜") continue;
+      
+      // 날짜 형태(연도 4자리 포함) 확인
+      if (/\\d{4}/.test(dateStr)) {
+        var timeStr = String(row[1] || "").trim();
+        var setNum = parseInt(row[3], 10) || (rows.length + 1);
+        var targetWt = parseFloat(String(row[4]).replace(/[^0-9.]/g, '')) || 0;
+        var targetReps = parseInt(String(row[5]).replace(/[^0-9]/g, ''), 10) || 0;
+        var actualWt = parseFloat(String(row[6]).replace(/[^0-9.]/g, '')) || targetWt;
+        var actualReps = parseInt(String(row[7]).replace(/[^0-9]/g, ''), 10) || targetReps;
+        var volume = parseFloat(String(row[8]).replace(/[^0-9.]/g, '')) || (actualWt * actualReps);
+        var duration = String(row[9] || "").trim();
+        var notes = String(row[10] || "").trim();
+        
+        rows.push({
+          date: dateStr,
+          time: timeStr,
+          exercise: exName,
+          setNum: setNum,
+          targetWeight: targetWt,
+          targetReps: targetReps,
+          actualWeight: actualWt,
+          actualReps: actualReps,
+          volume: volume,
+          duration: duration,
+          notes: notes
+        });
       }
     }
-    return ContentService.createTextOutput(JSON.stringify({ result: "success", rows: rows })).setMimeType(ContentService.MimeType.JSON);
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      result: "success",
+      count: rows.length,
+      rows: rows
+    })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      result: "error",
+      error: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-// 2. 구글 시트에 새 운동 기록 저장하기 (POST)
+// 2. 구글 시트에 새 운동 기록 추가하기 (POST)
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("운동 기록");
@@ -1754,7 +1814,6 @@ function doPost(e) {
         }
       });
 
-      // Abort modal
       document.getElementById('btn-abort-workout').addEventListener('click', () => {
         document.getElementById('modal-abort').classList.remove('hidden');
       });
@@ -1769,7 +1828,6 @@ function doPost(e) {
         showToast('운동이 취소되었습니다.', false);
       });
 
-      // Custom Exercises
       document.getElementById('form-add-exercise').addEventListener('submit', (e) => {
         e.preventDefault();
         const nameInput = document.getElementById('new-exercise-name');
@@ -1835,7 +1893,6 @@ function doPost(e) {
       loadSavedData();
       renderExerciseGrid();
       initEvents();
-      // Auto fetch if URL exists
       if (state.gasWebhookUrl) {
         fetchWorkoutHistoryFromSheets();
       }
