@@ -748,7 +748,7 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
 }
-// 2. 구글 시트에 새 운동 기록 추가 (POST)
+// 2. 구글 시트에 새 운동 기록 추가 (POST - 중복 방지 강화)
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet(), sheet = ss.getSheetByName("운동 기록");
@@ -756,15 +756,25 @@ function doPost(e) {
     if (data.rows && data.rows.length > 0) {
       var displayData = sheet.getDataRange().getDisplayValues();
       var existingKeys = {}, lastRow = 7;
+      
+      // 날짜/운동명/세트번호 정규화 키 생성 (셀 서식과 무관하게 100% 중복 차단)
+      function makeNormKey(dVal, exVal, setVal) {
+        var cleanDate = String(dVal || '').replace(/[^0-9]/g, '').substring(0, 8);
+        var cleanEx = String(exVal || '').replace(/\s+/g, '');
+        var cleanSet = parseInt(setVal, 10) || 1;
+        return cleanDate + '__' + cleanEx + '__' + cleanSet;
+      }
+
       for (var i = 0; i < displayData.length; i++) {
         var r = displayData[i];
         if (r[0] && /\d{4}/.test(r[0]) && r[2] && r[2] !== "운동 종목") {
           lastRow = i + 1;
-          existingKeys[r[0]+"_"+r[1]+"_"+r[2]+"_"+r[3]] = true;
+          existingKeys[makeNormKey(r[0], r[2], r[3])] = true;
         }
       }
+
       data.rows.forEach(function(row) {
-        var k = row[0]+"_"+row[1]+"_"+row[2]+"_"+row[3];
+        var k = makeNormKey(row[0], row[2], row[3]);
         if (!existingKeys[k]) {
           lastRow++;
           sheet.getRange(lastRow, 1, 1, row.length).setValues([row]);
@@ -919,7 +929,8 @@ function doPost(e) {
 
       gasWebhookUrl: '',
       isMuted: false,
-      isFetchingSheets: false
+      isFetchingSheets: false,
+      isUploadingToSheets: false
     };
 
     // Screen Wake Lock API (화면 꺼짐 방지)
@@ -1417,6 +1428,7 @@ function doPost(e) {
         maxWeight,
         estimated1RM: maxEst1RM,
         duration: durationFormatted,
+        synced: false,
         sets: state.sets.map(s => ({ ...s }))
       };
 
@@ -1456,20 +1468,53 @@ function doPost(e) {
         breakdown.appendChild(item);
       });
 
-      const badge = document.getElementById('sync-status-badge');
+      updateSyncButtonUI(sessionLog);
+
       if (state.gasWebhookUrl) {
-        badge.textContent = 'Webhook 연동됨';
-        badge.className = 'text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-medium';
         sendWorkoutToGoogleSheets(sessionLog, false);
-      } else {
-        badge.textContent = 'Webhook 미설정';
-        badge.className = 'text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-medium';
       }
 
       showStep('summary');
     }
 
-    // Google Sheets Push
+    function updateSyncButtonUI(sessionLog) {
+      const btn = document.getElementById('btn-sync-google-sheets');
+      const badge = document.getElementById('sync-status-badge');
+      if (!btn) return;
+
+      if (sessionLog && sessionLog.synced) {
+        btn.disabled = true;
+        btn.className = 'flex-1 py-2 rounded-lg bg-slate-800 text-emerald-400 font-bold text-xs border border-emerald-500/30 flex items-center justify-center gap-1 cursor-default opacity-90';
+        btn.innerHTML = '<span>✓ 시트 저장 완료</span>';
+        if (badge) {
+          badge.textContent = '저장 완료 ✓';
+          badge.className = 'text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold';
+        }
+      } else if (state.isUploadingToSheets) {
+        btn.disabled = true;
+        btn.className = 'flex-1 py-2 rounded-lg bg-emerald-600 text-slate-950 font-bold text-xs flex items-center justify-center gap-1 cursor-wait';
+        btn.innerHTML = '<span class="inline-block spinning">🔄</span><span>전송 중...</span>';
+        if (badge) {
+          badge.textContent = '전송 중...';
+          badge.className = 'text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-medium';
+        }
+      } else {
+        btn.disabled = false;
+        btn.className = 'flex-1 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs transition-colors flex items-center justify-center gap-1 shadow-md shadow-emerald-500/20';
+        btn.innerHTML = '<span>☁️ 시트로 전송</span>';
+        if (badge) {
+          if (state.gasWebhookUrl) {
+            badge.textContent = 'Webhook 연동됨';
+            badge.className = 'text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-medium';
+          } else {
+            badge.textContent = 'Webhook 미설정';
+            badge.className = 'text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-medium';
+          }
+        }
+      }
+    }
+
+    // Google Sheets Push with Duplicate Prevention
     function sendWorkoutToGoogleSheets(sessionLog, isManual = true) {
       if (!state.gasWebhookUrl) {
         if (isManual) {
@@ -1478,6 +1523,24 @@ function doPost(e) {
         }
         return;
       }
+
+      if (sessionLog.synced) {
+        if (isManual) {
+          showToast('이미 구글 시트에 저장이 완료되었습니다. (중복 방지) ✓', true);
+        }
+        updateSyncButtonUI(sessionLog);
+        return;
+      }
+
+      if (state.isUploadingToSheets) {
+        if (isManual) {
+          showToast('현재 구글 시트로 전송 중입니다. 잠시만 기다려주세요...', false);
+        }
+        return;
+      }
+
+      state.isUploadingToSheets = true;
+      updateSyncButtonUI(sessionLog);
 
       const rows = [];
       sessionLog.sets.forEach(s => {
@@ -1504,12 +1567,15 @@ function doPost(e) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rows: rows })
       }).then(() => {
+        state.isUploadingToSheets = false;
+        sessionLog.synced = true;
+        saveHistory();
+        updateSyncButtonUI(sessionLog);
         showToast('구글 시트에 저장되었습니다! 🎉', true);
-        const badge = document.getElementById('sync-status-badge');
-        badge.textContent = '저장 완료 ✓';
-        badge.className = 'text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold';
       }).catch(err => {
         console.error(err);
+        state.isUploadingToSheets = false;
+        updateSyncButtonUI(sessionLog);
         showToast('구글 시트 전송 중 오류가 발생했습니다.', false);
       });
     }
@@ -1631,6 +1697,7 @@ function doPost(e) {
       const parsedSessions = [];
       sessionMap.forEach(sess => {
         sess.totalSets = sess.sets.length;
+        sess.synced = true;
         let vol = 0;
         let maxWt = 0;
         sess.sets.forEach(s => {
@@ -1640,6 +1707,15 @@ function doPost(e) {
         sess.totalVolume = vol;
         sess.maxWeight = maxWt;
         parsedSessions.push(sess);
+      });
+
+      // 로컬에만 있고 아직 시트에 미동기화된 세션(synced === false) 보존
+      const localUnsynced = state.history.filter(h => h && h.synced === false);
+      localUnsynced.forEach(localSess => {
+        const key = `${localSess.date}__${localSess.exercise}`;
+        if (!sessionMap.has(key)) {
+          parsedSessions.push(localSess);
+        }
       });
 
       parsedSessions.sort((a, b) => {
@@ -2404,7 +2480,7 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
 }
-// 2. 구글 시트에 새 운동 기록 추가 (POST)
+// 2. 구글 시트에 새 운동 기록 추가 (POST - 중복 방지 강화)
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet(), sheet = ss.getSheetByName("운동 기록");
@@ -2412,15 +2488,25 @@ function doPost(e) {
     if (data.rows && data.rows.length > 0) {
       var displayData = sheet.getDataRange().getDisplayValues();
       var existingKeys = {}, lastRow = 7;
+      
+      // 날짜/운동명/세트번호 정규화 키 생성 (셀 서식과 무관하게 100% 중복 차단)
+      function makeNormKey(dVal, exVal, setVal) {
+        var cleanDate = String(dVal || '').replace(/[^0-9]/g, '').substring(0, 8);
+        var cleanEx = String(exVal || '').replace(/\\s+/g, '');
+        var cleanSet = parseInt(setVal, 10) || 1;
+        return cleanDate + '__' + cleanEx + '__' + cleanSet;
+      }
+
       for (var i = 0; i < displayData.length; i++) {
         var r = displayData[i];
         if (r[0] && /\\d{4}/.test(r[0]) && r[2] && r[2] !== "운동 종목") {
           lastRow = i + 1;
-          existingKeys[r[0]+"_"+r[1]+"_"+r[2]+"_"+r[3]] = true;
+          existingKeys[makeNormKey(r[0], r[2], r[3])] = true;
         }
       }
+
       data.rows.forEach(function(row) {
-        var k = row[0]+"_"+row[1]+"_"+row[2]+"_"+row[3];
+        var k = makeNormKey(row[0], row[2], row[3]);
         if (!existingKeys[k]) {
           lastRow++;
           sheet.getRange(lastRow, 1, 1, row.length).setValues([row]);
