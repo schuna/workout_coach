@@ -294,6 +294,34 @@
           <div id="exercise-grid" class="grid grid-cols-2 gap-2.5 mt-4">
             <!-- Populated via JS -->
           </div>
+
+          <!-- Multi-Exercise Selection Dock (Appears when >= 1 exercise selected) -->
+          <div id="multi-select-dock" class="hidden mt-4 pt-3.5 border-t border-[var(--border-subtle)] space-y-2.5 bg-[var(--bg-surface-subtle)]/70 p-3 rounded-2xl border">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-bold text-[var(--text-primary)]">선택된 종목</span>
+                <span id="selected-exercises-count" class="text-[10px] px-2 py-0.5 rounded-full bg-[#3182F6] text-white font-bold font-mono-num">1 / 3</span>
+              </div>
+              <button id="btn-clear-selection" type="button" class="text-[11px] text-[var(--text-muted)] hover:text-[#F04452] font-semibold transition-colors">
+                선택 초기화
+              </button>
+            </div>
+            
+            <!-- Selected Exercises Chips -->
+            <div id="selected-exercises-chips" class="flex flex-wrap gap-1.5 min-h-[30px] items-center">
+              <!-- Populated via JS -->
+            </div>
+
+            <p class="text-[10px] text-[var(--text-muted)]">
+              💡 최대 3개 종목을 담아 <b>슈퍼세트(교차)</b> 또는 <b>순차 루틴</b>으로 함께 진행할 수 있어요.
+            </p>
+
+            <button id="btn-proceed-to-plan" type="button" class="w-full py-3 rounded-xl bg-[#3182F6] hover:bg-[#1B64DA] active:scale-[0.98] text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5">
+              <span id="btn-proceed-plan-label">세트 계획하기 (1개 종목)</span>
+              <span>→</span>
+            </button>
+          </div>
+
         </div>
       </section>
 
@@ -405,6 +433,22 @@
       <section id="step-active" class="hidden flex-1 flex flex-col justify-between py-1">
         <div class="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4 sm:p-5 shadow-xl flex-1 flex flex-col justify-between">
           
+          <!-- Multi-exercise Stepper Bar (Active when >= 2 exercises) -->
+          <div id="active-multiround-header" class="hidden mb-3 p-2.5 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] space-y-1.5">
+            <div class="flex items-center justify-between text-[11px]">
+              <div class="flex items-center gap-1.5 font-mono-num font-bold text-[var(--text-primary)]">
+                <span class="w-2 h-2 rounded-full bg-[#3182F6] animate-pulse"></span>
+                <span id="active-round-label">ROUND 1 / 4</span>
+              </div>
+              <span id="active-mode-label" class="text-[10px] text-[#3182F6] font-semibold bg-[#3182F6]/10 px-2 py-0.5 rounded-full border border-[#3182F6]/20">
+                🔁 슈퍼세트
+              </span>
+            </div>
+            <div id="active-exercise-stepper" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+              <!-- Stepper chips: [● 1. 벤치프레스] → [○ 2. 바벨 로우] -->
+            </div>
+          </div>
+
           <!-- Top Row: Exercise Name & Elapsed Stopwatch -->
           <div class="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]/80">
             <div>
@@ -505,7 +549,7 @@
         <div class="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4 sm:p-6 shadow-2xl text-center relative flex-1 flex flex-col justify-between">
           
           <div>
-            <span class="text-[10px] uppercase tracking-widest font-bold text-cyan-400 bg-cyan-500/10 px-3 py-0.5 rounded-full border border-cyan-500/20 inline-block mb-1">
+            <span id="rest-timer-type-badge" class="text-[10px] uppercase tracking-widest font-bold text-[#3182F6] bg-[#3182F6]/10 px-3 py-0.5 rounded-full border border-[#3182F6]/20 inline-block mb-1">
               REST & RECOVERY
             </span>
             <h2 class="text-lg font-black text-[var(--text-primary)]">
@@ -1064,10 +1108,27 @@ function removeDuplicateRows() {
       activeCategory: 'ALL',
       exercises: [],
       
+      // Multi-exercise Architecture
+      selectedExercises: [], // Array of exercise objects (max 3)
+      workoutMode: 'superset', // 'superset' (교차) or 'sequential' (순차)
+      roundCount: 4, // Number of rounds / sets per exercise
+      exerciseConfigs: {}, // { [exId]: { exercise, sets: [], selectedRestSec } }
+      activePlanTabExId: null, // Currently active tab in Plan screen
+
+      // Active Workout Execution
+      currentRound: 1, // 1 to roundCount
+      currentExerciseIndex: 0, // 0 to selectedExercises.length - 1
+      currentSequentialSetIndex: 0, // for sequential mode
+      supersetTransitionSec: 15, // Preparation time between exercises in superset
+      supersetRoundRestSec: 90, // Recovery rest after completing a full round
+      timerMode: 'set', // 'transition' (종목간 전환 15s) | 'round' (본휴식 90s) | 'set' (일반 세트휴식)
+
+      // Legacy Compatibility References
       selectedExercise: null,
       planSets: 4,
       sets: [],
       currentSetIndex: 0,
+
       workoutStartTime: null,
       workoutStartTimeMs: null,
       workoutElapsedSeconds: 0,
@@ -1315,104 +1376,156 @@ function removeDuplicateRows() {
       return Math.round(wt * (1 + rp / 30));
     }
 
-    function selectExercise(ex) {
-      state.selectedExercise = ex;
-      state.planSets = 4;
-      state.selectedRestSec = ex.defaultRestSec || 60;
-      
-      let defaultWeight = 60;
-      let defaultReps = 10;
-      if (ex.name === '스쿼트' || ex.name === '데드리프트') {
-        defaultWeight = 80;
-        defaultReps = 8;
-      } else if (ex.name === '오버헤드 프레스' || ex.name === '바벨 로우') {
-        defaultWeight = 40;
-        defaultReps = 10;
-      } else if (ex.name === '덤벨 컬' || ex.name === '풀업') {
-        defaultWeight = ex.name === '풀업' ? 0 : 12;
-        defaultReps = 12;
-      } else if (ex.name === '펙 덱 플라이') {
-        defaultWeight = 35;
-        defaultReps = 12;
+        // ==============================================
+    // STEP 2: MULTI-EXERCISE PLAN & CONFIGURATION
+    // ==============================================
+    function proceedToPlanScreen() {
+      if (state.selectedExercises.length === 0) {
+        showToast('진행할 운동을 최소 1개 이상 선택해 주세요!', false);
+        return;
       }
 
-      state.sets = [];
-      for (let i = 1; i <= state.planSets; i++) {
-        state.sets.push({
-          setNum: i,
-          targetWeight: defaultWeight,
-          targetReps: defaultReps,
-          actualWeight: defaultWeight,
-          actualReps: defaultReps,
-          completed: false
+      state.roundCount = 4;
+      state.exerciseConfigs = {};
+
+      state.selectedExercises.forEach(ex => {
+        let defaultWeight = 60;
+        let defaultReps = 10;
+        if (ex.name === '스쿼트' || ex.name === '데드리프트') {
+          defaultWeight = 80;
+          defaultReps = 8;
+        } else if (ex.name === '오버헤드 프레스' || ex.name === '바벨 로우') {
+          defaultWeight = 40;
+          defaultReps = 10;
+        } else if (ex.name === '덤벨 컬' || ex.name === '풀업') {
+          defaultWeight = ex.name === '풀업' ? 0 : 12;
+          defaultReps = 12;
+        } else if (ex.name === '펙 덱 플라이') {
+          defaultWeight = 35;
+          defaultReps = 12;
+        }
+
+        const sets = [];
+        for (let i = 1; i <= state.roundCount; i++) {
+          sets.push({
+            setNum: i,
+            targetWeight: defaultWeight,
+            targetReps: defaultReps,
+            actualWeight: defaultWeight,
+            actualReps: defaultReps,
+            completed: false
+          });
+        }
+
+        // Check last session for this exercise
+        const lastSession = state.history.find(h => {
+          if (h.exercise === ex.name) return true;
+          if (h.exercises && h.exercises.includes(ex.name)) return true;
+          return false;
         });
+
+        state.exerciseConfigs[ex.id] = {
+          exercise: ex,
+          sets: sets,
+          selectedRestSec: ex.defaultRestSec || 60,
+          lastRecordSession: lastSession || null
+        };
+      });
+
+      // Default active tab to first exercise
+      state.activePlanTabExId = state.selectedExercises[0].id;
+      state.selectedExercise = state.selectedExercises[0];
+      state.sets = state.exerciseConfigs[state.activePlanTabExId].sets;
+      state.planSets = state.roundCount;
+      state.selectedRestSec = state.exerciseConfigs[state.activePlanTabExId].selectedRestSec;
+
+      showStep('plan');
+      renderPlanScreen();
+    }
+
+    function renderPlanExerciseTabs() {
+      const tabsContainer = document.getElementById('plan-exercise-tabs');
+      if (!tabsContainer) return;
+
+      if (state.selectedExercises.length <= 1) {
+        tabsContainer.classList.add('hidden');
+        return;
       }
 
-      // Check last workout history for this exercise
-      const lastSession = state.history.find(h => h.exercise === ex.name);
+      tabsContainer.classList.remove('hidden');
+      tabsContainer.innerHTML = '';
+
+      state.selectedExercises.forEach((ex, idx) => {
+        const isActive = ex.id === state.activePlanTabExId;
+        const tabBtn = document.createElement('button');
+        tabBtn.type = 'button';
+        tabBtn.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all whitespace-nowrap ${
+          isActive 
+            ? 'bg-[#3182F6] text-white border-[#3182F6] shadow-sm' 
+            : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:text-[var(--text-primary)]'
+        }`;
+        tabBtn.innerHTML = `
+          <span class="w-4 h-4 rounded-full ${isActive ? 'bg-white text-[#3182F6]' : 'bg-[var(--bg-surface-subtle)] text-[var(--text-muted)]'} text-[9px] font-mono-num flex items-center justify-center font-bold">${idx + 1}</span>
+          <span>${ex.name}</span>
+        `;
+        tabBtn.addEventListener('click', () => {
+          state.activePlanTabExId = ex.id;
+          state.selectedExercise = ex;
+          state.sets = state.exerciseConfigs[ex.id].sets;
+          state.selectedRestSec = state.exerciseConfigs[ex.id].selectedRestSec;
+          renderPlanScreen();
+        });
+        tabsContainer.appendChild(tabBtn);
+      });
+    }
+
+    function renderPlanScreen() {
+      const isMulti = state.selectedExercises.length > 1;
+      const curConfig = state.exerciseConfigs[state.activePlanTabExId] || {
+        exercise: state.selectedExercises[0],
+        sets: state.sets,
+        selectedRestSec: 60
+      };
+      const curEx = curConfig.exercise;
+
+      // Header labels
+      const modeSelector = document.getElementById('plan-mode-selector-container');
+      const setsLabel = document.getElementById('plan-sets-label');
+      if (modeSelector) {
+        if (isMulti) modeSelector.classList.remove('hidden');
+        else modeSelector.classList.add('hidden');
+      }
+
+      if (setsLabel) {
+        setsLabel.textContent = isMulti ? '라운드' : '세트';
+      }
+
+      document.getElementById('plan-exercise-title').textContent = isMulti 
+        ? `${curEx.name} (${state.selectedExercises.findIndex(e => e.id === curEx.id) + 1}/${state.selectedExercises.length})`
+        : curEx.name;
+      document.getElementById('plan-badge-cat').textContent = curEx.category;
+      document.getElementById('plan-sets-count').textContent = state.roundCount;
+
+      renderPlanExerciseTabs();
+
+      // Last session banner for current exercise
       const lastBox = document.getElementById('plan-last-record-box');
-      if (lastSession && lastSession.sets && lastSession.sets.length > 0) {
-        state.lastRecordSession = lastSession;
+      if (curConfig.lastRecordSession && curConfig.lastRecordSession.sets && curConfig.lastRecordSession.sets.length > 0) {
+        const lastSession = curConfig.lastRecordSession;
         if (lastBox) {
           lastBox.classList.remove('hidden');
           document.getElementById('plan-last-record-date').textContent = `(${lastSession.date || '최근'})`;
           document.getElementById('plan-last-record-summary').textContent = `최고 ${lastSession.maxWeight || 0}kg · ${lastSession.totalSets || lastSession.sets.length}세트 · 볼륨 ${(lastSession.totalVolume || 0).toLocaleString()}kg`;
         }
       } else {
-        state.lastRecordSession = null;
         if (lastBox) lastBox.classList.add('hidden');
       }
 
-      showStep('plan');
-      renderPlanScreen();
-      updateRestChipsUI();
-    }
-
-    function applyLastRecordToPlan() {
-      if (!state.lastRecordSession || !state.lastRecordSession.sets || state.lastRecordSession.sets.length === 0) {
-        showToast('불러올 이전 기록이 없습니다.', false);
-        return;
-      }
-      const prevSets = state.lastRecordSession.sets;
-      state.planSets = prevSets.length;
-      state.sets = prevSets.map((s, idx) => ({
-        setNum: idx + 1,
-        targetWeight: s.actualWeight || s.targetWeight || 0,
-        targetReps: s.actualReps || s.targetReps || 0,
-        actualWeight: s.actualWeight || s.targetWeight || 0,
-        actualReps: s.actualReps || s.targetReps || 0,
-        completed: false
-      }));
-      renderPlanScreen();
-      showToast(`지난 기록(${state.lastRecordSession.date}) 세트 구성을 적용했습니다! ⚡`, true);
-    }
-
-    function updateRestChipsUI() {
-      const chips = document.querySelectorAll('.rest-chip');
-      chips.forEach(chip => {
-        const sec = parseInt(chip.getAttribute('data-sec'), 10);
-        if (sec === state.selectedRestSec) {
-          chip.className = 'rest-chip active py-1 rounded-lg text-[11px] font-mono-num font-bold bg-[#3182F6] text-[var(--text-primary)] transition-all text-center';
-        } else {
-          chip.className = 'rest-chip py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all text-center';
-        }
-      });
-      const lbl = document.getElementById('plan-selected-rest-label');
-      if (lbl) lbl.textContent = `${state.selectedRestSec}초`;
-      const sumRest = document.getElementById('summary-rest-duration');
-      if (sumRest) sumRest.textContent = `${state.selectedRestSec} 초`;
-    }
-
-    function renderPlanScreen() {
-      if (!state.selectedExercise) return;
-      document.getElementById('plan-exercise-title').textContent = state.selectedExercise.name;
-      document.getElementById('plan-badge-cat').textContent = state.selectedExercise.category;
-      document.getElementById('plan-sets-count').textContent = state.planSets;
-
+      // Sets configuration table
       const container = document.getElementById('sets-config-list');
       container.innerHTML = '';
 
-      state.sets.forEach((set, idx) => {
+      curConfig.sets.forEach((set, idx) => {
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between p-2.5 bg-[var(--bg-surface-subtle)]/80 rounded-xl border border-[var(--border-subtle)]/80 gap-2';
         row.innerHTML = `
@@ -1420,7 +1533,7 @@ function removeDuplicateRows() {
             <span class="w-5 h-5 rounded bg-[#3182F6]/10 text-[#3182F6] font-mono-num font-bold text-[10px] flex items-center justify-center border border-[#3182F6]/30">
               #${set.setNum}
             </span>
-            <span class="text-xs font-bold text-[var(--text-primary)]">SET ${set.setNum}</span>
+            <span class="text-xs font-bold text-[var(--text-primary)]">${isMulti ? `ROUND ${set.setNum}` : `SET ${set.setNum}`}</span>
           </div>
 
           <div class="flex items-center gap-2">
@@ -1458,15 +1571,53 @@ function removeDuplicateRows() {
       updateRestChipsUI();
     }
 
-    function updatePlanSummary() {
-      const totalSets = state.sets.length;
-      let estVolume = 0;
-      state.sets.forEach(s => {
-        estVolume += (s.targetWeight * s.targetReps);
+    function applyLastRecordToPlan() {
+      const curConfig = state.exerciseConfigs[state.activePlanTabExId];
+      if (!curConfig || !curConfig.lastRecordSession || !curConfig.lastRecordSession.sets || curConfig.lastRecordSession.sets.length === 0) {
+        showToast('불러올 이전 기록이 없습니다.', false);
+        return;
+      }
+      const prevSets = curConfig.lastRecordSession.sets.filter(s => s.exercise === curConfig.exercise.name || !s.exercise);
+      if (prevSets.length === 0) {
+        showToast('불러올 이전 세트 데이터가 없습니다.', false);
+        return;
+      }
+
+      curConfig.sets.forEach((s, idx) => {
+        const ref = prevSets[idx] || prevSets[prevSets.length - 1];
+        s.targetWeight = ref.actualWeight || ref.targetWeight || 0;
+        s.targetReps = ref.actualReps || ref.targetReps || 0;
+        s.actualWeight = s.targetWeight;
+        s.actualReps = s.targetReps;
       });
 
-      document.getElementById('summary-total-sets').textContent = `${totalSets} 세트`;
-      document.getElementById('summary-est-volume').textContent = `${estVolume.toLocaleString()} kg`;
+      renderPlanScreen();
+      showToast(`${curConfig.exercise.name} 이전 기록을 적용했어요! ⚡`, true);
+    }
+
+    function updatePlanSummary() {
+      const isMulti = state.selectedExercises.length > 1;
+      let totalSets = 0;
+      let estVolume = 0;
+
+      state.selectedExercises.forEach(ex => {
+        const cfg = state.exerciseConfigs[ex.id];
+        if (cfg && cfg.sets) {
+          totalSets += cfg.sets.length;
+          cfg.sets.forEach(s => {
+            estVolume += (s.targetWeight * s.targetReps);
+          });
+        }
+      });
+
+      const setsEl = document.getElementById('summary-total-sets');
+      if (setsEl) {
+        setsEl.textContent = isMulti ? `${state.selectedExercises.length}종목 × ${state.roundCount}R (${totalSets}세트)` : `${totalSets} 세트`;
+      }
+      const volEl = document.getElementById('summary-est-volume');
+      if (volEl) {
+        volEl.textContent = `${estVolume.toLocaleString()} kg`;
+      }
     }
 
     // Workout Flow
@@ -1743,7 +1894,7 @@ function removeDuplicateRows() {
         rows.push([
           sessionLog.date,
           sessionLog.time,
-          sessionLog.exercise,
+          s.exercise || sessionLog.exercise,
           s.setNum,
           s.targetWeight,
           s.targetReps,
@@ -2431,6 +2582,8 @@ function removeDuplicateRows() {
 
       document.getElementById('btn-back-to-select').addEventListener('click', () => {
         showStep('select');
+        renderExerciseGrid();
+        updateMultiSelectDock();
       });
 
       document.getElementById('btn-dec-sets').addEventListener('click', () => {
@@ -2491,6 +2644,80 @@ function removeDuplicateRows() {
           applyLastRecordToPlan();
         });
       }
+
+      // Multi-Exercise Dock Events
+      const btnProceedPlan = document.getElementById('btn-proceed-to-plan');
+      if (btnProceedPlan) {
+        btnProceedPlan.addEventListener('click', proceedToPlanScreen);
+      }
+
+      const btnClearSel = document.getElementById('btn-clear-selection');
+      if (btnClearSel) {
+        btnClearSel.addEventListener('click', () => {
+          state.selectedExercises = [];
+          renderExerciseGrid();
+          updateMultiSelectDock();
+          showToast('종목 선택이 초기화되었어요.', true);
+        });
+      }
+
+      // Mode Selector Events
+      const btnModeSuperset = document.getElementById('btn-mode-superset');
+      const btnModeSeq = document.getElementById('btn-mode-sequential');
+      const planModeDesc = document.getElementById('plan-mode-desc');
+
+      if (btnModeSuperset && btnModeSeq) {
+        btnModeSuperset.addEventListener('click', () => {
+          state.workoutMode = 'superset';
+          btnModeSuperset.className = 'mode-select-btn active py-2 px-2.5 rounded-lg text-xs font-bold text-center border transition-all bg-[#3182F6] text-white border-[#3182F6] shadow-sm';
+          btnModeSeq.className = 'mode-select-btn py-2 px-2.5 rounded-lg text-xs font-bold text-center border transition-all bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:text-[var(--text-primary)]';
+          if (planModeDesc) planModeDesc.textContent = '종목을 1세트씩 번갈아가며 진행해요. (A 1세트 → B 1세트 → 본 휴식 → 반복)';
+          updatePlanSummary();
+        });
+
+        btnModeSeq.addEventListener('click', () => {
+          state.workoutMode = 'sequential';
+          btnModeSeq.className = 'mode-select-btn active py-2 px-2.5 rounded-lg text-xs font-bold text-center border transition-all bg-[#3182F6] text-white border-[#3182F6] shadow-sm';
+          btnModeSuperset.className = 'mode-select-btn py-2 px-2.5 rounded-lg text-xs font-bold text-center border transition-all bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:text-[var(--text-primary)]';
+          if (planModeDesc) planModeDesc.textContent = 'A종목 전체 세트 완료 후 즉시 B종목 세트를 순서대로 진행해요.';
+          updatePlanSummary();
+        });
+      }
+
+      // Set/Round Count Adjuster
+      document.getElementById('btn-inc-sets').addEventListener('click', () => {
+        if (state.roundCount < 10) {
+          state.roundCount++;
+          state.selectedExercises.forEach(ex => {
+            const cfg = state.exerciseConfigs[ex.id];
+            if (cfg) {
+              const last = cfg.sets[cfg.sets.length - 1];
+              cfg.sets.push({
+                setNum: cfg.sets.length + 1,
+                targetWeight: last ? last.targetWeight : 60,
+                targetReps: last ? last.targetReps : 10,
+                actualWeight: last ? last.targetWeight : 60,
+                actualReps: last ? last.targetReps : 10,
+                completed: false
+              });
+            }
+          });
+          renderPlanScreen();
+        }
+      });
+
+      document.getElementById('btn-dec-sets').addEventListener('click', () => {
+        if (state.roundCount > 1) {
+          state.roundCount--;
+          state.selectedExercises.forEach(ex => {
+            const cfg = state.exerciseConfigs[ex.id];
+            if (cfg && cfg.sets.length > 1) {
+              cfg.sets.pop();
+            }
+          });
+          renderPlanScreen();
+        }
+      });
 
       document.getElementById('btn-start-workout').addEventListener('click', () => {
         startWorkoutSession();
@@ -2629,7 +2856,10 @@ function removeDuplicateRows() {
       });
 
       document.getElementById('btn-restart-workout').addEventListener('click', () => {
+        state.selectedExercises = [];
         showStep('select');
+        renderExerciseGrid();
+        updateMultiSelectDock();
       });
 
       document.getElementById('btn-save-gas-url').addEventListener('click', () => {
