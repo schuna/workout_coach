@@ -1,12 +1,12 @@
 // Workout Coach PWA Service Worker
-const CACHE_NAME = 'workout-coach-v1';
+const CACHE_NAME = 'workout-coach-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
   'https://cdn.tailwindcss.com/3.4.17',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap'
+  'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css'
 ];
 
 self.addEventListener('install', (event) => {

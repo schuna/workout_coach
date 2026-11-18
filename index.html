@@ -253,6 +253,29 @@
     <!-- ============================================== -->
     <div id="view-workout" class="w-full flex-1 flex flex-col">
 
+      <!-- Step Process Navigator Bar -->
+      <div id="step-process-navigator" class="mb-3.5 px-1 flex items-center justify-between text-[11px] font-bold overflow-x-auto no-scrollbar">
+        <div id="step-nav-1" class="step-nav-pill active flex items-center gap-1 text-[#3182F6]">
+          <span class="w-4 h-4 rounded-full bg-[#3182F6] text-white text-[9px] font-mono-num flex items-center justify-center">1</span>
+          <span>종목 선택</span>
+        </div>
+        <span class="text-[var(--text-muted)] text-[10px]">›</span>
+        <div id="step-nav-2" class="step-nav-pill flex items-center gap-1 text-[var(--text-muted)]">
+          <span class="w-4 h-4 rounded-full bg-[var(--bg-surface-subtle)] text-[var(--text-muted)] text-[9px] font-mono-num flex items-center justify-center border border-[var(--border-subtle)]">2</span>
+          <span>세트 계획</span>
+        </div>
+        <span class="text-[var(--text-muted)] text-[10px]">›</span>
+        <div id="step-nav-3" class="step-nav-pill flex items-center gap-1 text-[var(--text-muted)]">
+          <span class="w-4 h-4 rounded-full bg-[var(--bg-surface-subtle)] text-[var(--text-muted)] text-[9px] font-mono-num flex items-center justify-center border border-[var(--border-subtle)]">3</span>
+          <span>운동 진행</span>
+        </div>
+        <span class="text-[var(--text-muted)] text-[10px]">›</span>
+        <div id="step-nav-5" class="step-nav-pill flex items-center gap-1 text-[var(--text-muted)]">
+          <span class="w-4 h-4 rounded-full bg-[var(--bg-surface-subtle)] text-[var(--text-muted)] text-[9px] font-mono-num flex items-center justify-center border border-[var(--border-subtle)]">4</span>
+          <span>완료 요약</span>
+        </div>
+      </div>
+
       <!-- STEP 1: EXERCISE SELECTION -->
       <section id="step-select" class="space-y-4">
         <div class="toss-card p-4 sm:p-5 relative overflow-hidden">
@@ -295,15 +318,16 @@
             <!-- Populated via JS -->
           </div>
 
-          <!-- Multi-Exercise Selection Dock (Appears when >= 1 exercise selected) -->
-          <div id="multi-select-dock" class="hidden mt-4 pt-3.5 border-t border-[var(--border-subtle)] space-y-2.5 bg-[var(--bg-surface-subtle)]/70 p-3 rounded-2xl border">
+          <!-- Multi-Exercise Selection Dock (Sticky Floating Bottom Tray) -->
+          <div id="multi-select-dock" class="hidden sticky bottom-3 z-30 mt-4 p-3.5 rounded-2xl bg-[var(--bg-surface-elevated)] border-2 border-[#3182F6] shadow-2xl backdrop-blur-md space-y-2.5 transition-all animate-bounce-short">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-1.5">
-                <span class="text-xs font-bold text-[var(--text-primary)]">선택된 종목</span>
+                <span class="w-2 h-2 rounded-full bg-[#3182F6] animate-ping"></span>
+                <span class="text-xs font-bold text-[var(--text-primary)]">선택된 운동 바구니</span>
                 <span id="selected-exercises-count" class="text-[10px] px-2 py-0.5 rounded-full bg-[#3182F6] text-white font-bold font-mono-num">1 / 3</span>
               </div>
               <button id="btn-clear-selection" type="button" class="text-[11px] text-[var(--text-muted)] hover:text-[#F04452] font-semibold transition-colors">
-                선택 초기화
+                초기화
               </button>
             </div>
             
@@ -313,12 +337,11 @@
             </div>
 
             <p class="text-[10px] text-[var(--text-muted)]">
-              💡 최대 3개 종목을 담아 <b>슈퍼세트(교차)</b> 또는 <b>순차 루틴</b>으로 함께 진행할 수 있어요.
+              💡 카드를 탭하여 최대 3개까지 담고 <b>슈퍼세트(교차)</b> 또는 <b>순차 루틴</b>으로 진행해요.
             </p>
 
-            <button id="btn-proceed-to-plan" type="button" class="w-full py-3 rounded-xl bg-[#3182F6] hover:bg-[#1B64DA] active:scale-[0.98] text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5">
-              <span id="btn-proceed-plan-label">세트 계획하기 (1개 종목)</span>
-              <span>→</span>
+            <button id="btn-proceed-to-plan" type="button" class="w-full py-3.5 rounded-xl bg-[#3182F6] hover:bg-[#1B64DA] active:scale-[0.98] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-1.5">
+              <span id="btn-proceed-plan-label">세트 계획하기 →</span>
             </button>
           </div>
 
@@ -332,7 +355,7 @@
           <div class="flex items-center justify-between pb-3.5 border-b border-[var(--border-subtle)] gap-2">
             <div>
               <div class="flex items-center gap-1.5">
-                <button id="btn-back-to-select" type="button" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-[11px] font-semibold bg-slate-800 px-2 py-0.5 rounded-md">
+                <button id="btn-back-to-select" type="button" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-[11px] font-semibold bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] px-2 py-0.5 rounded-md">
                   ← 뒤로
                 </button>
                 <span id="plan-badge-cat" class="text-[10px] px-2 py-0.5 rounded-full bg-[#3182F6]/10 text-[#3182F6] border border-[#3182F6]/30 font-semibold">가슴</span>
@@ -1341,8 +1364,74 @@ function removeDuplicateRows() {
     }
 
     // Exercise Grid
+    // ==============================================
+    // STEP 1: MULTI-EXERCISE SELECTION & DOCK
+    // ==============================================
+    function toggleExerciseSelection(ex) {
+      initAudio();
+      const existingIdx = state.selectedExercises.findIndex(e => e.id === ex.id);
+      if (existingIdx >= 0) {
+        state.selectedExercises.splice(existingIdx, 1);
+      } else {
+        if (state.selectedExercises.length >= 3) {
+          showToast('최대 3개 종목까지만 한 번에 진행할 수 있어요.', false);
+          return;
+        }
+        state.selectedExercises.push(ex);
+      }
+      renderExerciseGrid();
+      updateMultiSelectDock();
+    }
+
+    function updateMultiSelectDock() {
+      const dock = document.getElementById('multi-select-dock');
+      const countBadge = document.getElementById('selected-exercises-count');
+      const chipsContainer = document.getElementById('selected-exercises-chips');
+      const proceedLabel = document.getElementById('btn-proceed-plan-label');
+
+      if (!dock) return;
+
+      const count = state.selectedExercises.length;
+      if (count === 0) {
+        dock.classList.add('hidden');
+        return;
+      }
+
+      dock.classList.remove('hidden');
+      if (countBadge) countBadge.textContent = `${count} / 3`;
+
+      if (chipsContainer) {
+        chipsContainer.innerHTML = '';
+        state.selectedExercises.forEach((ex, idx) => {
+          const chip = document.createElement('div');
+          chip.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--bg-surface)] border border-[#3182F6]/40 text-xs font-bold text-[var(--text-primary)] shadow-sm';
+          chip.innerHTML = `
+            <span class="w-4 h-4 rounded-full bg-[#3182F6] text-white text-[10px] font-mono-num flex items-center justify-center font-bold">${idx + 1}</span>
+            <span>${ex.icon || '🏋️'}</span>
+            <span>${ex.name}</span>
+            <button type="button" class="text-[var(--text-muted)] hover:text-[#F04452] ml-1 text-sm font-bold leading-none p-0.5" title="제거">✕</button>
+          `;
+          chip.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleExerciseSelection(ex);
+          });
+          chipsContainer.appendChild(chip);
+        });
+      }
+
+      if (proceedLabel) {
+        if (count === 1) {
+          proceedLabel.textContent = `세트 계획하기 (단일 종목) →`;
+        } else {
+          const modeName = state.workoutMode === 'superset' ? '슈퍼세트' : '순차 묶음';
+          proceedLabel.textContent = `세트 계획하기 (${count}개 종목 ${modeName}) →`;
+        }
+      }
+    }
+
     function renderExerciseGrid() {
       const grid = document.getElementById('exercise-grid');
+      if (!grid) return;
       grid.innerHTML = '';
 
       const filtered = state.exercises.filter(ex => {
@@ -1353,15 +1442,24 @@ function removeDuplicateRows() {
       filtered.forEach(ex => {
         const card = document.createElement('button');
         card.type = 'button';
-        card.className = 'flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] hover:border-[#3182F6]/30 active:scale-95 text-center transition-all group';
+        const isSelected = state.selectedExercises.some(e => e.id === ex.id);
+        const selOrder = state.selectedExercises.findIndex(e => e.id === ex.id) + 1;
+
+        if (isSelected) {
+          card.className = 'relative flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[var(--toss-blue-weak)] border-2 border-[#3182F6] text-center transition-all group shadow-md transform scale-[1.02]';
+        } else {
+          card.className = 'relative flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[#3182F6] active:scale-[0.98] text-center transition-all group shadow-sm';
+        }
+
         card.innerHTML = `
-          <div class="text-2xl mb-1 group-hover:scale-110 transition-transform">${ex.icon || '🏋️'}</div>
-          <span class="text-[10px] px-2 py-0.2 rounded-full bg-slate-800 text-[var(--text-muted)] font-medium mb-1">${ex.category}</span>
-          <span class="text-xs font-bold text-[var(--text-primary)] group-hover:text-[#3182F6] transition-colors">${ex.name}</span>
+          ${isSelected ? `<span class="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#3182F6] text-white text-[10px] font-bold font-mono-num flex items-center justify-center shadow-sm">✓ ${selOrder}</span>` : ''}
+          <div class="text-2xl mb-1.5 group-hover:scale-110 transition-transform">${ex.icon || '🏋️'}</div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[var(--bg-surface-subtle)] text-[var(--text-muted)] font-semibold mb-1 border border-[var(--border-subtle)]">${ex.category}</span>
+          <span class="font-bold text-xs ${isSelected ? 'text-[#3182F6]' : 'text-[var(--text-primary)]'} group-hover:text-[#3182F6] transition-colors">${ex.name}</span>
         `;
+
         card.addEventListener('click', () => {
-          initAudio();
-          selectExercise(ex);
+          toggleExerciseSelection(ex);
         });
         grid.appendChild(card);
       });
@@ -1621,10 +1719,16 @@ function removeDuplicateRows() {
     }
 
     // Workout Flow
+    // ==============================================
+    // STEP 3, 4, 5: WORKOUT EXECUTION ENGINE
+    // ==============================================
     function startWorkoutSession() {
       initAudio();
       requestWakeLock();
-      state.currentSetIndex = 0;
+      state.currentRound = 1;
+      state.currentExerciseIndex = 0;
+      state.currentSequentialSetIndex = 0;
+
       state.workoutStartTime = new Date();
       state.workoutStartTimeMs = Date.now();
       state.workoutElapsedSeconds = 0;
@@ -1635,22 +1739,94 @@ function removeDuplicateRows() {
         const hrs = String(Math.floor(state.workoutElapsedSeconds / 3600)).padStart(2, '0');
         const mins = String(Math.floor((state.workoutElapsedSeconds % 3600) / 60)).padStart(2, '0');
         const secs = String(state.workoutElapsedSeconds % 60).padStart(2, '0');
-        document.getElementById('workout-elapsed-timer').textContent = `${hrs}:${mins}:${secs}`;
+        const timerEl = document.getElementById('workout-elapsed-timer');
+        if (timerEl) timerEl.textContent = `${hrs}:${mins}:${secs}`;
       }, 1000);
 
       showStep('active');
       renderActiveSet();
-      showToast('운동 시작! 힘내세요!', true);
+      showToast(state.selectedExercises.length > 1 
+        ? `${state.selectedExercises.length}개 종목 복합 운동을 시작해요!` 
+        : '운동을 시작해요! 힘내세요!', true);
+    }
+
+    function renderActiveExerciseStepper() {
+      const header = document.getElementById('active-multiround-header');
+      const roundLabel = document.getElementById('active-round-label');
+      const modeLabel = document.getElementById('active-mode-label');
+      const stepper = document.getElementById('active-exercise-stepper');
+      if (!header) return;
+
+      if (state.selectedExercises.length <= 1) {
+        header.classList.add('hidden');
+        return;
+      }
+
+      header.classList.remove('hidden');
+      if (roundLabel) {
+        roundLabel.textContent = `ROUND ${state.currentRound} / ${state.roundCount}`;
+      }
+      if (modeLabel) {
+        modeLabel.textContent = state.workoutMode === 'superset' ? '🔁 슈퍼세트' : '➡️ 순차 묶음';
+      }
+
+      if (stepper) {
+        stepper.innerHTML = '';
+        state.selectedExercises.forEach((ex, idx) => {
+          const isCurrent = idx === state.currentExerciseIndex;
+          const isDoneInRound = idx < state.currentExerciseIndex;
+          const chip = document.createElement('div');
+          chip.className = `flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all whitespace-nowrap border ${
+            isCurrent 
+              ? 'bg-[#3182F6] text-white border-[#3182F6] shadow-sm' 
+              : isDoneInRound 
+                ? 'bg-[var(--bg-surface)] text-[#3182F6] border-[#3182F6]/30'
+                : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border-subtle)]'
+          }`;
+          chip.innerHTML = `
+            <span>${isCurrent ? '●' : isDoneInRound ? '✓' : '○'}</span>
+            <span>${idx + 1}. ${ex.name}</span>
+          `;
+          stepper.appendChild(chip);
+        });
+      }
+    }
+
+    function getCurrentActiveSetInfo() {
+      const curEx = state.selectedExercises[state.currentExerciseIndex] || state.selectedExercises[0];
+      const cfg = state.exerciseConfigs[curEx.id];
+      const setIdx = state.workoutMode === 'superset' ? (state.currentRound - 1) : state.currentSequentialSetIndex;
+      const curSet = (cfg && cfg.sets) ? (cfg.sets[setIdx] || cfg.sets[0]) : {
+        setNum: setIdx + 1,
+        targetWeight: 60,
+        targetReps: 10,
+        actualWeight: 60,
+        actualReps: 10,
+        completed: false
+      };
+      return { curEx, cfg, curSet, setIdx };
     }
 
     function renderActiveSet() {
-      const curSet = state.sets[state.currentSetIndex];
+      renderActiveExerciseStepper();
+
+      const { curEx, cfg, curSet } = getCurrentActiveSetInfo();
       if (!curSet) return;
 
-      document.getElementById('active-cat-badge').textContent = state.selectedExercise.category;
-      document.getElementById('active-exercise-title').textContent = state.selectedExercise.name;
-      document.getElementById('active-set-badge').innerHTML = `SET ${curSet.setNum} <span class="text-2xl text-[var(--text-muted)] font-bold">/ ${state.sets.length}</span>`;
-      
+      const isMulti = state.selectedExercises.length > 1;
+
+      document.getElementById('active-cat-badge').textContent = curEx.category;
+      document.getElementById('active-exercise-title').textContent = curEx.name;
+
+      const setBadge = document.getElementById('active-set-badge');
+      if (setBadge) {
+        if (isMulti) {
+          setBadge.innerHTML = `ROUND ${state.currentRound} <span class="text-xl sm:text-2xl text-[var(--text-muted)] font-bold">(${curEx.name} SET ${curSet.setNum})</span>`;
+        } else {
+          setBadge.innerHTML = `SET ${curSet.setNum} <span class="text-2xl text-[var(--text-muted)] font-bold">/ ${state.roundCount}</span>`;
+        }
+      }
+
       document.getElementById('active-target-weight').textContent = curSet.targetWeight;
       document.getElementById('active-target-reps').textContent = curSet.targetReps;
 
@@ -1664,30 +1840,87 @@ function removeDuplicateRows() {
 
     function completeCurrentSet() {
       initAudio();
-      const curSet = state.sets[state.currentSetIndex];
+      const { curEx, curSet } = getCurrentActiveSetInfo();
       const actWt = parseFloat(document.getElementById('actual-weight-input').value) || curSet.targetWeight;
       const actReps = parseInt(document.getElementById('actual-reps-input').value, 10) || curSet.targetReps;
 
       curSet.actualWeight = actWt;
       curSet.actualReps = actReps;
       curSet.completed = true;
+      curSet.exercise = curEx.name;
+      curSet.category = curEx.category;
 
-      if (state.currentSetIndex >= state.sets.length - 1) {
-        finishWorkoutSession();
+      const isMulti = state.selectedExercises.length > 1;
+
+      if (!isMulti) {
+        // Single Exercise Flow
+        if (state.currentRound >= state.roundCount) {
+          finishWorkoutSession();
+        } else {
+          state.currentRound++;
+          startRestTimer('set', state.selectedRestSec || 60, `다음: SET ${state.currentRound} 준비`);
+        }
+        return;
+      }
+
+      // Multi-Exercise Flow
+      if (state.workoutMode === 'superset') {
+        if (state.currentExerciseIndex < state.selectedExercises.length - 1) {
+          state.currentExerciseIndex++;
+          const nextEx = state.selectedExercises[state.currentExerciseIndex];
+          startRestTimer('transition', state.supersetTransitionSec, `다음 종목: [${nextEx.name}] 준비 (빠른 전환)`);
+        } else {
+          if (state.currentRound >= state.roundCount) {
+            finishWorkoutSession();
+          } else {
+            state.currentRound++;
+            state.currentExerciseIndex = 0;
+            const firstEx = state.selectedExercises[0];
+            startRestTimer('round', state.supersetRoundRestSec, `ROUND ${state.currentRound - 1} 완료! 본 휴식 후 ROUND ${state.currentRound} [${firstEx.name}] 준비`);
+          }
+        }
       } else {
-        startRestTimer();
+        // Sequential Mode
+        const curCfg = state.exerciseConfigs[curEx.id];
+        if (state.currentSequentialSetIndex < curCfg.sets.length - 1) {
+          state.currentSequentialSetIndex++;
+          startRestTimer('set', curCfg.selectedRestSec || 60, `다음: ${curEx.name} SET ${state.currentSequentialSetIndex + 1} 준비`);
+        } else {
+          if (state.currentExerciseIndex < state.selectedExercises.length - 1) {
+            state.currentExerciseIndex++;
+            state.currentSequentialSetIndex = 0;
+            const nextEx = state.selectedExercises[state.currentExerciseIndex];
+            startRestTimer('round', 60, `${curEx.name} 완수! 다음 종목 [${nextEx.name}] 준비`);
+          } else {
+            finishWorkoutSession();
+          }
+        }
       }
     }
 
-    function startRestTimer() {
+    function startRestTimer(timerType, duration, previewText) {
       showStep('rest');
-      const duration = state.selectedRestSec || 60;
+      state.timerMode = timerType;
       state.restDuration = duration;
       state.restRemaining = duration;
       state.restEndTimestamp = Date.now() + duration * 1000;
 
-      const nextSet = state.sets[state.currentSetIndex + 1];
-      document.getElementById('rest-next-preview').textContent = `다음: SET ${nextSet.setNum} (${nextSet.targetWeight}kg × ${nextSet.targetReps}회) 준비`;
+      const badge = document.getElementById('rest-timer-type-badge');
+      if (badge) {
+        if (timerType === 'transition') {
+          badge.textContent = 'TRANSITION · 다음 종목 준비';
+          badge.className = 'text-[10px] uppercase tracking-widest font-bold text-amber-500 bg-amber-500/10 px-3 py-0.5 rounded-full border border-amber-500/20 inline-block mb-1';
+        } else if (timerType === 'round') {
+          badge.textContent = 'ROUND RECOVERY · 본 휴식';
+          badge.className = 'text-[10px] uppercase tracking-widest font-bold text-[#3182F6] bg-[#3182F6]/10 px-3 py-0.5 rounded-full border border-[#3182F6]/20 inline-block mb-1';
+        } else {
+          badge.textContent = 'REST & RECOVERY · 세트 휴식';
+          badge.className = 'text-[10px] uppercase tracking-widest font-bold text-[#3182F6] bg-[#3182F6]/10 px-3 py-0.5 rounded-full border border-[#3182F6]/20 inline-block mb-1';
+        }
+      }
+
+      const previewEl = document.getElementById('rest-next-preview');
+      if (previewEl) previewEl.textContent = previewText;
 
       updateRestTimerDisplay();
 
@@ -1712,8 +1945,7 @@ function removeDuplicateRows() {
           clearInterval(state.restInterval);
           state.restInterval = null;
           chimeTimerComplete();
-          showToast('휴식 종료! 다음 세트 시작.', true);
-          state.currentSetIndex++;
+          showToast('휴식 종료! 다음 운동을 시작해요.', true);
           showStep('active');
           renderActiveSet();
         }
@@ -1722,22 +1954,21 @@ function removeDuplicateRows() {
 
     function updateRestTimerDisplay() {
       const display = document.getElementById('rest-timer-display');
-      display.textContent = state.restRemaining;
+      if (display) display.textContent = state.restRemaining;
 
       const circumference = 263.89;
       const progress = Math.max(0, state.restRemaining / state.restDuration);
       const offset = circumference * (1 - progress);
       const ring = document.getElementById('timer-progress-ring');
-      ring.style.strokeDashoffset = offset;
+      if (ring) ring.style.strokeDashoffset = offset;
     }
 
     function skipRestTimer() {
       if (state.restInterval) clearInterval(state.restInterval);
       state.restInterval = null;
-      state.currentSetIndex++;
       showStep('active');
       renderActiveSet();
-      showToast('다음 세트로 이동했습니다.', true);
+      showToast('다음 운동으로 이동했어요.', true);
     }
 
     function finishWorkoutSession() {
@@ -1755,28 +1986,48 @@ function removeDuplicateRows() {
       let totalVolume = 0;
       let maxWeight = 0;
       let maxEst1RM = 0;
-      state.sets.forEach(s => {
-        if (s.completed) {
-          totalVolume += (s.actualWeight * s.actualReps);
-          if (s.actualWeight > maxWeight) maxWeight = s.actualWeight;
-          const oneRm = calculate1RM(s.actualWeight, s.actualReps);
-          if (oneRm > maxEst1RM) maxEst1RM = oneRm;
+      let totalCompletedSets = 0;
+      const allSets = [];
+
+      state.selectedExercises.forEach(ex => {
+        const cfg = state.exerciseConfigs[ex.id];
+        if (cfg && cfg.sets) {
+          cfg.sets.forEach(s => {
+            if (s.completed) {
+              totalCompletedSets++;
+              totalVolume += (s.actualWeight * s.actualReps);
+              if (s.actualWeight > maxWeight) maxWeight = s.actualWeight;
+              const oneRm = calculate1RM(s.actualWeight, s.actualReps);
+              if (oneRm > maxEst1RM) maxEst1RM = oneRm;
+              allSets.push({
+                ...s,
+                exercise: ex.name,
+                category: ex.category
+              });
+            }
+          });
         }
       });
+
+      const isMulti = state.selectedExercises.length > 1;
+      const sessionExerciseTitle = isMulti 
+        ? `${state.workoutMode === 'superset' ? '슈퍼세트' : '묶음'}: ${state.selectedExercises.map(e => e.name).join(' + ')}`
+        : state.selectedExercises[0].name;
 
       const sessionLog = {
         id: 'sess_' + Date.now(),
         date: state.workoutStartTime.toISOString().split('T')[0],
         time: state.workoutStartTime.toTimeString().split(' ')[0].substring(0, 5),
-        exercise: state.selectedExercise.name,
-        category: state.selectedExercise.category,
-        totalSets: state.sets.filter(s => s.completed).length,
+        exercise: sessionExerciseTitle,
+        exercises: state.selectedExercises.map(e => e.name),
+        category: isMulti ? '복합' : state.selectedExercises[0].category,
+        totalSets: totalCompletedSets,
         totalVolume,
         maxWeight,
         estimated1RM: maxEst1RM,
         duration: durationFormatted,
         synced: false,
-        sets: state.sets.map(s => ({ ...s }))
+        sets: allSets
       };
 
       state.history.unshift(sessionLog);
@@ -1787,9 +2038,12 @@ function removeDuplicateRows() {
       playTone(783.99, 'sine', 0.2, 0.4);
       playTone(1046.50, 'sine', 0.5, 0.6);
 
-      document.getElementById('summary-exercise-subtitle').textContent = `${state.selectedExercise.name} ${sessionLog.totalSets}세트 완수!`;
+      document.getElementById('summary-exercise-subtitle').textContent = isMulti
+        ? `${state.selectedExercises.length}개 종목 (${state.selectedExercises.map(e => e.name).join(', ')}) 총 ${totalCompletedSets}세트 완수!`
+        : `${state.selectedExercises[0].name} ${totalCompletedSets}세트 완수!`;
+
       document.getElementById('final-duration').textContent = durationFormatted;
-      document.getElementById('final-sets-count').textContent = `${sessionLog.totalSets} / ${state.sets.length}`;
+      document.getElementById('final-sets-count').textContent = `${totalCompletedSets} 세트`;
       document.getElementById('final-total-volume').textContent = `${totalVolume.toLocaleString()} kg`;
       document.getElementById('final-max-weight').textContent = `${maxWeight} kg`;
       const final1rmEl = document.getElementById('final-est-1rm');
@@ -1797,7 +2051,7 @@ function removeDuplicateRows() {
 
       const breakdown = document.getElementById('final-sets-breakdown');
       breakdown.innerHTML = '';
-      state.sets.forEach(s => {
+      allSets.forEach(s => {
         const item = document.createElement('div');
         item.className = 'flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-xs';
         item.innerHTML = `
@@ -1805,7 +2059,7 @@ function removeDuplicateRows() {
             <span class="w-5 h-5 rounded bg-[#3182F6]/20 text-[#3182F6] font-bold flex items-center justify-center font-mono-num text-[10px]">
               ${s.setNum}
             </span>
-            <span class="font-bold text-[var(--text-primary)]">SET ${s.setNum}</span>
+            <span class="font-bold text-[var(--text-primary)]">${s.exercise} #${s.setNum}</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="font-bold text-[#3182F6] font-mono-num">${s.actualWeight}kg × ${s.actualReps}회</span>
