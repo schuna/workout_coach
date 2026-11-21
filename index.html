@@ -15,7 +15,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="웨이트코치">
-  <meta name="description" content="실시간 세트 가이드, 정밀 휴식 타이머, 구글 시트 연동 웨이트 트레이닝 코치">
+  <meta name="description" content="실시간 세트 가이드, 유산소 러닝 트래킹, 정밀 휴식 타이머, 구글 시트 연동 트레이닝 코치">
 
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script>
@@ -230,16 +230,19 @@
 
     <!-- Navigation Tabs: Mobile Scrollable -->
     <div class="max-w-md sm:max-w-xl mx-auto px-2 flex border-t border-[var(--border-subtle)] overflow-x-auto no-scrollbar">
-      <button id="tab-nav-workout" type="button" class="tab-btn active flex-1 min-w-[70px] py-2.5 text-xs font-bold border-b-2 border-[#3182F6] text-[#3182F6] whitespace-nowrap text-center transition-colors">
-        🏋️ 운동
+      <button id="tab-nav-workout" type="button" class="tab-btn active flex-1 min-w-[64px] px-1.5 py-2.5 text-[11px] sm:text-xs font-bold border-b-2 border-[#3182F6] text-[#3182F6] whitespace-nowrap text-center transition-colors">
+        🏋️ 웨이트
       </button>
-      <button id="tab-nav-history" type="button" class="tab-btn flex-1 min-w-[70px] py-2.5 text-xs font-bold border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] whitespace-nowrap text-center transition-colors">
+      <button id="tab-nav-cardio" type="button" class="tab-btn flex-1 min-w-[64px] px-1.5 py-2.5 text-[11px] sm:text-xs font-bold border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] whitespace-nowrap text-center transition-colors">
+        🏃 유산소
+      </button>
+      <button id="tab-nav-history" type="button" class="tab-btn flex-1 min-w-[64px] px-1.5 py-2.5 text-[11px] sm:text-xs font-bold border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] whitespace-nowrap text-center transition-colors">
         📊 기록/통계
       </button>
-      <button id="tab-nav-settings" type="button" class="tab-btn flex-1 min-w-[85px] py-2.5 text-xs font-bold border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] whitespace-nowrap text-center transition-colors">
-        🔗 시트 연동
+      <button id="tab-nav-settings" type="button" class="tab-btn flex-1 min-w-[64px] px-1.5 py-2.5 text-[11px] sm:text-xs font-bold border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] whitespace-nowrap text-center transition-colors">
+        🔗 시트
       </button>
-      <button id="tab-nav-exercises" type="button" class="tab-btn flex-1 min-w-[70px] py-2.5 text-xs font-bold border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] whitespace-nowrap text-center transition-colors">
+      <button id="tab-nav-exercises" type="button" class="tab-btn flex-1 min-w-[64px] px-1.5 py-2.5 text-[11px] sm:text-xs font-bold border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] whitespace-nowrap text-center transition-colors">
         ⚙️ 종목
       </button>
     </div>
@@ -711,6 +714,225 @@
     </div>
 
     <!-- ============================================== -->
+    <!-- VIEW 1.5: CARDIO / TREADMILL TRACKING          -->
+    <!-- ============================================== -->
+    <div id="view-cardio" class="hidden space-y-4">
+
+      <!-- Block A: Weekly Cardio Summary Card -->
+      <div id="cardio-weekly-summary" class="toss-card p-4 sm:p-5">
+        <div class="flex items-start justify-between gap-2 pb-3 border-b border-[var(--border-subtle)]">
+          <div>
+            <span class="text-[10px] uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20 inline-block mb-1.5">
+              🏃 유산소 요약
+            </span>
+            <h2 class="text-lg sm:text-xl font-black text-[var(--text-primary)] tracking-tight">
+              최근 7일 러닝 · 유산소
+            </h2>
+            <p id="cardio-weekly-range" class="text-[11px] text-[var(--text-muted)] font-mono-num mt-0.5">
+              최근 7일 · 0활동
+            </p>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-lg shrink-0">
+            🏃
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+          <div class="toss-card-subtle p-2.5 text-center">
+            <span class="text-[10px] text-[var(--text-muted)] block">누적 거리</span>
+            <span id="cardio-week-distance" class="font-mono-num text-sm sm:text-base font-black text-[#3182F6]">0.00 km</span>
+          </div>
+          <div class="toss-card-subtle p-2.5 text-center">
+            <span class="text-[10px] text-[var(--text-muted)] block">지속 시간</span>
+            <span id="cardio-week-duration" class="font-mono-num text-sm sm:text-base font-black text-[var(--text-primary)]">0분</span>
+          </div>
+          <div class="toss-card-subtle p-2.5 text-center">
+            <span class="text-[10px] text-[var(--text-muted)] block">평균 페이스</span>
+            <span id="cardio-week-pace" class="font-mono-num text-sm sm:text-base font-black text-[var(--text-primary)]">-</span>
+          </div>
+          <div class="toss-card-subtle p-2.5 text-center">
+            <span class="text-[10px] text-[var(--text-muted)] block">평균 심박수</span>
+            <span id="cardio-week-hr" class="font-mono-num text-sm sm:text-base font-black text-rose-500">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Block B: Cardio Entry Card (Manual + Live Timer) -->
+      <div id="cardio-entry-card" class="toss-card p-4 sm:p-5 space-y-3.5">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-sm font-black text-[var(--text-primary)]">유산소 활동 기록하기</h3>
+          <div class="inline-flex p-0.5 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)]">
+            <button id="btn-cardio-mode-manual" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#3182F6] text-white transition-all">
+              📝 직접 기록
+            </button>
+            <button id="btn-cardio-mode-timer" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all">
+              ⏱ 실시간 측정
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Stopwatch Panel -->
+        <div id="cardio-live-timer-panel" class="hidden toss-card-subtle p-3.5 text-center space-y-2.5">
+          <div>
+            <div id="cardio-stopwatch-display" class="font-mono-num text-4xl sm:text-5xl font-black text-[var(--text-primary)] tracking-tight">
+              00:00.0
+            </div>
+            <p id="cardio-stopwatch-status" class="text-[11px] text-[var(--text-muted)] font-medium mt-1">
+              대기 중
+            </p>
+          </div>
+          <div class="flex items-center justify-center gap-2">
+            <button id="btn-cardio-sw-toggle" type="button" class="flex-1 py-2.5 rounded-xl bg-[#3182F6] hover:bg-[#1B64DA] text-white text-xs font-bold transition-all active:scale-[0.98]">
+              ▶ 시작
+            </button>
+            <button id="btn-cardio-sw-apply" type="button" class="flex-1 py-2.5 rounded-xl bg-[var(--toss-blue-weak)] text-[var(--toss-blue-weak-text)] border border-[#3182F6]/30 text-xs font-bold transition-all active:scale-[0.98]">
+              ✓ 시간 적용
+            </button>
+            <button id="btn-cardio-sw-reset" type="button" class="px-3 py-2.5 rounded-xl bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] text-xs font-bold transition-all active:scale-[0.98]">
+              ↺ 초기화
+            </button>
+          </div>
+        </div>
+
+        <form id="form-cardio-log" class="space-y-3">
+          <!-- Activity Type Chips -->
+          <div>
+            <label class="text-[11px] text-[var(--text-muted)] font-semibold block mb-1.5">종목 선택</label>
+            <div id="cardio-type-chips" class="flex flex-wrap gap-1.5">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- Conditional Custom Name Input -->
+          <div id="cardio-custom-name-wrap" class="hidden">
+            <label for="cardio-custom-name" class="text-[11px] text-[var(--text-muted)] font-semibold block mb-1">유산소 종목명</label>
+            <input id="cardio-custom-name" type="text" placeholder="예: 일립티컬, 천국의 계단" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-xs font-semibold text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+          </div>
+
+          <!-- Date & Time -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="cardio-date" class="text-[11px] text-[var(--text-muted)] font-semibold block mb-1">날짜</label>
+              <input id="cardio-date" type="date" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-xs font-mono-num font-bold text-[var(--text-primary)] focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+            </div>
+            <div>
+              <label for="cardio-time" class="text-[11px] text-[var(--text-muted)] font-semibold block mb-1">시작 시각</label>
+              <input id="cardio-time" type="time" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-xs font-mono-num font-bold text-[var(--text-primary)] focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+            </div>
+          </div>
+
+          <!-- Distance (km) -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="cardio-distance" class="text-[11px] text-[var(--text-muted)] font-semibold">거리 (km)</label>
+              <span class="text-[10px] text-[var(--text-muted)]">소수 둘째 자리까지</span>
+            </div>
+            <div class="relative">
+              <input id="cardio-distance" type="number" step="0.01" min="0" inputmode="decimal" placeholder="3.06" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl pl-3 pr-10 py-2.5 text-sm font-mono-num font-bold text-[#3182F6] focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[var(--text-muted)]">km</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-1.5">
+              <button type="button" class="cardio-dist-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-km="2">2km</button>
+              <button type="button" class="cardio-dist-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-km="3">3km</button>
+              <button type="button" class="cardio-dist-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-km="4">4km</button>
+              <button type="button" class="cardio-dist-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-km="5">5km</button>
+              <button type="button" class="cardio-dist-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-km="6">6km</button>
+              <button type="button" class="cardio-dist-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-km="10">10km</button>
+            </div>
+          </div>
+
+          <!-- Duration (min / sec) -->
+          <div>
+            <label class="text-[11px] text-[var(--text-muted)] font-semibold block mb-1">지속 시간 (분 · 초)</label>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="relative">
+                <input id="cardio-min" type="number" min="0" max="600" inputmode="numeric" placeholder="25" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl pl-3 pr-8 py-2.5 text-sm font-mono-num font-bold text-[var(--text-primary)] focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[var(--text-muted)]">분</span>
+              </div>
+              <div class="relative">
+                <input id="cardio-sec" type="number" step="0.1" min="0" max="59.9" inputmode="decimal" placeholder="26.1" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl pl-3 pr-8 py-2.5 text-sm font-mono-num font-bold text-[var(--text-primary)] focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[var(--text-muted)]">초</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-1.5">
+              <button type="button" class="cardio-min-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-min="15">15분</button>
+              <button type="button" class="cardio-min-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-min="20">20분</button>
+              <button type="button" class="cardio-min-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-min="30">30분</button>
+              <button type="button" class="cardio-min-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-min="45">45분</button>
+              <button type="button" class="cardio-min-chip px-2.5 py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] transition-colors" data-min="60">60분</button>
+            </div>
+          </div>
+
+          <!-- Average Heart Rate -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="cardio-hr" class="text-[11px] text-[var(--text-muted)] font-semibold">평균 심박수 (bpm)</label>
+              <span class="text-[10px] text-[var(--text-muted)]">선택 입력</span>
+            </div>
+            <div class="relative">
+              <input id="cardio-hr" type="number" min="40" max="240" inputmode="numeric" placeholder="147" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl pl-3 pr-12 py-2.5 text-sm font-mono-num font-bold text-rose-500 focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[var(--text-muted)]">bpm</span>
+            </div>
+          </div>
+
+          <!-- Live Calculated Metrics Preview -->
+          <div id="cardio-live-preview" class="toss-card-subtle p-2.5 grid grid-cols-3 gap-2 text-center">
+            <div>
+              <span class="text-[10px] text-[var(--text-muted)] block">평균 페이스</span>
+              <span id="cardio-preview-pace" class="font-mono-num text-xs font-black text-[#3182F6]">-</span>
+            </div>
+            <div class="border-x border-[var(--border-subtle)]">
+              <span class="text-[10px] text-[var(--text-muted)] block">평균 속도</span>
+              <span id="cardio-preview-speed" class="font-mono-num text-xs font-black text-[var(--text-primary)]">-</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-[var(--text-muted)] block">심박 존</span>
+              <span id="cardio-preview-hr-zone" class="text-[11px] font-bold text-[var(--text-muted)]">미입력</span>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label for="cardio-notes" class="text-[11px] text-[var(--text-muted)] font-semibold block mb-1">메모 (선택)</label>
+            <input id="cardio-notes" type="text" placeholder="예: 인클라인 2%, 회복 조깅" class="w-full bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#3182F6] focus:ring-1 focus:ring-[#3182F6]">
+          </div>
+
+          <!-- Submit / Cancel -->
+          <div class="flex items-center gap-2 pt-1">
+            <button id="btn-save-cardio" type="submit" class="toss-btn-primary flex-1 py-3.5 text-sm shadow-sm flex items-center justify-center gap-1.5">
+              <span>✓ 유산소 기록 저장하기</span>
+            </button>
+            <button id="btn-cancel-cardio-edit" type="button" class="hidden px-4 py-3.5 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-bold transition-all">
+              수정 취소
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Block C: Cardio Activity History List -->
+      <div id="cardio-history-section" class="toss-card p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5">
+            <h3 class="text-sm font-black text-[var(--text-primary)]">🏃 유산소 활동 기록</h3>
+            <span id="cardio-list-count" class="text-[10px] px-2 py-0.5 rounded-full bg-[var(--toss-blue-weak)] text-[var(--toss-blue-weak-text)] font-mono-num font-bold">0활동</span>
+          </div>
+        </div>
+
+        <div id="cardio-list-filters" class="flex flex-wrap gap-1.5">
+          <button type="button" class="cardio-list-filter-pill active px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#3182F6] text-white transition-all" data-filter="ALL">전체</button>
+          <button type="button" class="cardio-list-filter-pill px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-filter="러닝머신">러닝머신</button>
+          <button type="button" class="cardio-list-filter-pill px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-filter="야외 러닝">야외 러닝</button>
+          <button type="button" class="cardio-list-filter-pill px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-filter="OTHER">기타</button>
+        </div>
+
+        <div id="cardio-activity-list" class="space-y-2.5">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
     <!-- VIEW 2: HISTORY & STATS -->
     <!-- ============================================== -->
     <div id="view-history" class="hidden space-y-4">
@@ -719,7 +941,7 @@
           <div>
             <div class="flex items-center gap-1.5">
               <h2 class="text-lg font-black text-[var(--text-primary)]">운동 기록 및 통계</h2>
-              <span id="history-sync-indicator" class="text-[9px] bg-slate-800 text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">대기중</span>
+              <span id="history-sync-indicator" class="text-[9px] bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-[var(--text-muted)] px-2 py-0.5 rounded-full font-medium">대기중</span>
             </div>
             <p class="text-[var(--text-muted)] text-[10px] mt-0.5">구글 스프레드시트 통합 뷰</p>
           </div>
@@ -729,13 +951,13 @@
               <span id="fetch-spinner" class="hidden">🔄</span>
               <span id="fetch-text">🔄 시트</span>
             </button>
-            <button id="btn-backup-json" type="button" class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[var(--text-primary)] text-[11px] font-semibold border border-[var(--border-subtle)]" title="JSON 파일로 전체 백업">
+            <button id="btn-backup-json" type="button" class="px-2 py-1.5 rounded-lg bg-[var(--bg-surface-subtle)] hover:bg-[var(--border-subtle)] text-[var(--text-primary)] text-[11px] font-semibold border border-[var(--border-subtle)]" title="JSON 파일로 전체 백업">
               💾 백업
             </button>
-            <button id="btn-restore-json-trigger" type="button" class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[var(--text-primary)] text-[11px] font-semibold border border-[var(--border-subtle)]" title="JSON 백업 파일 복원">
+            <button id="btn-restore-json-trigger" type="button" class="px-2 py-1.5 rounded-lg bg-[var(--bg-surface-subtle)] hover:bg-[var(--border-subtle)] text-[var(--text-primary)] text-[11px] font-semibold border border-[var(--border-subtle)]" title="JSON 백업 파일 복원">
               📂 복원
             </button>
-            <button id="btn-export-csv" type="button" class="px-2 py-1.5 rounded-lg bg-slate-800 text-[var(--text-primary)] text-[11px] font-semibold border border-[var(--border-subtle)]">
+            <button id="btn-export-csv" type="button" class="px-2 py-1.5 rounded-lg bg-[var(--bg-surface-subtle)] hover:bg-[var(--border-subtle)] text-[var(--text-primary)] text-[11px] font-semibold border border-[var(--border-subtle)]">
               CSV
             </button>
             <button id="btn-clear-history" type="button" class="px-1.5 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 text-[11px] font-semibold border border-rose-500/20" title="전체 삭제">
@@ -745,31 +967,45 @@
           </div>
         </div>
 
-        <div id="history-no-url-alert" class="hidden mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center justify-between gap-2">
+        <div id="history-no-url-alert" class="hidden mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs flex items-center justify-between gap-2">
           <span class="text-[11px]">연동 URL이 등록되지 않았습니다.</span>
-          <button id="btn-go-settings-from-hist" type="button" class="px-2.5 py-1 bg-amber-500 text-[var(--text-primary)] text-[11px] font-bold rounded-lg">
+          <button id="btn-go-settings-from-hist" type="button" class="px-2.5 py-1 bg-amber-500 text-white text-[11px] font-bold rounded-lg">
             설정하기
           </button>
         </div>
 
-        <!-- Period Filter Pills -->
-        <div class="flex items-center justify-between mt-3 mb-1">
-          <div class="flex items-center gap-1" id="history-period-filters">
-            <button type="button" class="hist-filter-pill active px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#3182F6] text-[var(--text-primary)] transition-all" data-period="ALL">
-              전체
+        <!-- Period & Activity Type Filter Pills -->
+        <div class="space-y-2 mt-3 mb-1">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1" id="history-period-filters">
+              <button type="button" class="hist-filter-pill active px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#3182F6] text-white transition-all" data-period="ALL">
+                전체
+              </button>
+              <button type="button" class="hist-filter-pill px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-period="7D">
+                최근 7일
+              </button>
+              <button type="button" class="hist-filter-pill px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-period="1M">
+                이번 달
+              </button>
+            </div>
+            <span id="history-filter-count-badge" class="text-[10px] text-[var(--text-muted)] font-mono-num font-medium">0 세션</span>
+          </div>
+
+          <div class="flex items-center gap-1" id="history-type-filters">
+            <button type="button" class="hist-type-pill active px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#3182F6] text-white transition-all" data-type="ALL">
+              전체 종목
             </button>
-            <button type="button" class="hist-filter-pill px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-period="7D">
-              최근 7일
+            <button type="button" class="hist-type-pill px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-type="weight">
+              🏋️ 웨이트
             </button>
-            <button type="button" class="hist-filter-pill px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-period="1M">
-              이번 달
+            <button type="button" class="hist-type-pill px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all" data-type="cardio">
+              🏃 유산소
             </button>
           </div>
-          <span id="history-filter-count-badge" class="text-[10px] text-[var(--text-muted)] font-mono-num font-medium">0 세션</span>
         </div>
 
-        <!-- KPI 3-Cards -->
-        <div class="grid grid-cols-3 gap-2 my-2">
+        <!-- KPI 4-Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 my-2">
           <div class="bg-[var(--bg-surface-subtle)] p-2 rounded-xl border border-[var(--border-subtle)] text-center">
             <span class="text-[10px] text-[var(--text-muted)] block">조회 세션</span>
             <span id="history-total-sessions" class="font-mono-num text-sm sm:text-base font-bold text-[var(--text-primary)]">0</span>
@@ -781,6 +1017,11 @@
           <div class="bg-[var(--bg-surface-subtle)] p-2 rounded-xl border border-[var(--border-subtle)] text-center">
             <span class="text-[10px] text-[var(--text-muted)] block">완료 세트</span>
             <span id="history-total-sets" class="font-mono-num text-sm sm:text-base font-bold text-[#3182F6]">0</span>
+          </div>
+          <div class="bg-[var(--bg-surface-subtle)] p-2 rounded-xl border border-[var(--border-subtle)] text-center">
+            <span class="text-[10px] text-[var(--text-muted)] block">누적 유산소</span>
+            <span id="history-total-cardio-km" class="font-mono-num text-sm sm:text-base font-bold text-amber-500">0.00 km</span>
+            <span id="history-total-cardio-meta" class="font-mono-num text-[9px] text-[var(--text-muted)] block truncate">0회 · -</span>
           </div>
         </div>
 
@@ -823,6 +1064,19 @@
               <span class="text-[10px] text-[var(--text-muted)]">주차별 합계 (kg)</span>
             </div>
             <div id="dashboard-weekly-volume" class="space-y-1.5">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- 2.5. Weekly Cardio Distance Trend (최근 4주 유산소 거리 추이 바) -->
+          <div class="bg-[var(--bg-surface-subtle)] p-3 rounded-xl border border-[var(--border-subtle)]">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[var(--text-secondary)] flex items-center gap-1.5">
+                <span>🏃</span><span>최근 4주 유산소 거리 추이</span>
+              </span>
+              <span class="text-[10px] text-[var(--text-muted)]">주차별 합계 (km)</span>
+            </div>
+            <div id="dashboard-weekly-cardio" class="space-y-1.5">
               <!-- Populated via JS -->
             </div>
           </div>
@@ -911,7 +1165,30 @@
             <div class="p-3 rounded-lg bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-[11px] text-[var(--text-muted)]">
               스프레드시트 상단 <b>확장 프로그램 > Apps Script</b>에 코드를 붙여넣고, <b>배포 > 배포 관리 > [신규 버전]</b>으로 배포하시면 모바일에서도 완벽하게 양방향 동기화됩니다.
             </div>
-            <pre class="bg-[var(--bg-surface)] p-2.5 rounded-lg text-[var(--text-secondary)] font-mono-num text-[10px] overflow-x-auto border border-[var(--border-subtle)] max-h-40"><code>// 1. 구글 시트에서 운동 기록 가져오기 (GET)
+            <pre class="bg-[var(--bg-surface)] p-2.5 rounded-lg text-[var(--text-secondary)] font-mono-num text-[10px] overflow-x-auto border border-[var(--border-subtle)] max-h-40"><code>// 0. 날짜(YYYY-MM-DD) & 시간(24시간 HH:MM) 텍스트 정규화 헬퍼
+function normalizeDateYMD(val) {
+  var s = String(val || '').trim();
+  var m = s.match(/^(\d{4})\s*[-./]\s*(\d{1,2})\s*[-./]\s*(\d{1,2})/);
+  if (!m) return s;
+  return m[1] + '-' + ('0' + parseInt(m[2], 10)).slice(-2) + '-' + ('0' + parseInt(m[3], 10)).slice(-2);
+}
+
+function normalizeTimeHHMM(val) {
+  var s = String(val || '').trim();
+  if (!s) return '';
+  var isPM = /(오후|PM)/i.test(s);
+  var isAM = /(오전|AM)/i.test(s);
+  var m = s.match(/(\d{1,2})\s*:\s*(\d{1,2})/);
+  if (!m) return s;
+  var hh = parseInt(m[1], 10);
+  var mm = parseInt(m[2], 10);
+  if (isNaN(hh) || isNaN(mm)) return s;
+  if (isPM && hh < 12) hh += 12;
+  else if (isAM && hh === 12) hh = 0;
+  return ('0' + hh).slice(-2) + ':' + ('0' + mm).slice(-2);
+}
+
+// 1. 구글 시트에서 운동 기록 가져오기 (GET)
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -921,11 +1198,11 @@ function doGet(e) {
     var rows = [];
     for (var i = 0; i < displayData.length; i++) {
       var row = displayData[i];
-      var d = String(row[0]||"").trim(), ex = String(row[2]||"").trim();
+      var d = normalizeDateYMD(row[0]), ex = String(row[2]||"").trim();
       if (!d || !ex || ex === "운동 종목" || d === "날짜") continue;
       if (/\d{4}/.test(d)) {
         rows.push({
-          date: d, time: String(row[1]||"").trim(), exercise: ex,
+          date: d, time: normalizeTimeHHMM(row[1]), exercise: ex,
           setNum: parseInt(row[3],10)||1,
           targetWeight: parseFloat(String(row[4]).replace(/[^0-9.]/g,''))||0,
           targetReps: parseInt(String(row[5]).replace(/[^0-9]/g,''),10)||0,
@@ -941,7 +1218,7 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
 }
-// 2. 구글 시트에 새 운동 기록 추가 (POST - 중복 방지 강화)
+// 2. 구글 시트에 새 운동 기록 추가 (POST - 중복 방지 강화 & 유산소 호환 & 로컬 텍스트 서식 고정)
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet(), sheet = ss.getSheetByName("운동 기록");
@@ -950,11 +1227,16 @@ function doPost(e) {
       var displayData = sheet.getDataRange().getDisplayValues();
       var existingKeys = {}, lastRow = 7;
       
-      // 날짜/운동명/세트번호 정규화 키 생성 (셀 서식과 무관하게 100% 중복 차단)
-      function makeNormKey(dVal, exVal, setVal) {
-        var cleanDate = String(dVal || '').replace(/[^0-9]/g, '').substring(0, 8);
+      // 날짜/운동명/세트번호 정규화 키 생성 (유산소는 시간 포함으로 동일일 다회 기록 허용)
+      function makeNormKey(dVal, exVal, setVal, timeVal, noteVal) {
+        var cleanDate = normalizeDateYMD(dVal).replace(/[^0-9]/g, '').substring(0, 8);
         var cleanEx = String(exVal || '').replace(/\s+/g, '');
         var cleanSet = parseInt(setVal, 10) || 1;
+        var isCardio = String(noteVal || '').indexOf('[유산소]') !== -1;
+        if (isCardio) {
+          var cleanTime = normalizeTimeHHMM(timeVal).replace(/[^0-9]/g, '').substring(0, 4);
+          return cleanDate + '__' + cleanEx + '__' + cleanTime + '__' + cleanSet;
+        }
         return cleanDate + '__' + cleanEx + '__' + cleanSet;
       }
 
@@ -962,16 +1244,27 @@ function doPost(e) {
         var r = displayData[i];
         if (r[0] && /\d{4}/.test(r[0]) && r[2] && r[2] !== "운동 종목") {
           lastRow = i + 1;
-          existingKeys[makeNormKey(r[0], r[2], r[3])] = true;
+          existingKeys[makeNormKey(r[0], r[2], r[3], r[1], r[10])] = true;
         }
       }
 
       data.rows.forEach(function(row) {
-        var k = makeNormKey(row[0], row[2], row[3]);
+        var rowCopy = row.slice();
+        rowCopy[0] = normalizeDateYMD(rowCopy[0]);
+        rowCopy[1] = normalizeTimeHHMM(rowCopy[1]);
+        var isCardio = String(rowCopy[10] || '').indexOf('[유산소]') !== -1;
+        var k = makeNormKey(rowCopy[0], rowCopy[2], rowCopy[3], rowCopy[1], rowCopy[10]);
         if (!existingKeys[k]) {
           lastRow++;
-          sheet.getRange(lastRow, 1, 1, row.length).setValues([row]);
-          sheet.getRange(lastRow, 9).setFormula("=G" + lastRow + "*H" + lastRow);
+          if (isCardio) {
+            sheet.getRange(lastRow, 10).setNumberFormat("@");
+          }
+          sheet.getRange(lastRow, 1, 1, rowCopy.length).setValues([rowCopy]);
+          sheet.getRange(lastRow, 1).setNumberFormat("yyyy-mm-dd");
+          sheet.getRange(lastRow, 2).setNumberFormat("HH:mm");
+          if (!isCardio) {
+            sheet.getRange(lastRow, 9).setFormula("=G" + lastRow + "*H" + lastRow);
+          }
           existingKeys[k] = true;
         }
       });
@@ -989,10 +1282,15 @@ function removeDuplicateRows() {
   var data = sheet.getDataRange().getDisplayValues();
   if (data.length <= 1) return;
 
-  function makeNormKey(dVal, exVal, setVal) {
-    var cleanDate = String(dVal || '').replace(/[^0-9]/g, '').substring(0, 8);
+  function makeNormKey(dVal, exVal, setVal, timeVal, noteVal) {
+    var cleanDate = normalizeDateYMD(dVal).replace(/[^0-9]/g, '').substring(0, 8);
     var cleanEx = String(exVal || '').replace(/\s+/g, '');
     var cleanSet = parseInt(setVal, 10) || 1;
+    var isCardio = String(noteVal || '').indexOf('[유산소]') !== -1;
+    if (isCardio) {
+      var cleanTime = normalizeTimeHHMM(timeVal).replace(/[^0-9]/g, '').substring(0, 4);
+      return cleanDate + '__' + cleanEx + '__' + cleanTime + '__' + cleanSet;
+    }
     return cleanDate + '__' + cleanEx + '__' + cleanSet;
   }
 
@@ -1000,7 +1298,7 @@ function removeDuplicateRows() {
   for (var i = 0; i < data.length; i++) {
     var r = data[i], d = String(r[0] || '').trim(), ex = String(r[2] || '').trim();
     if (d && /\d{4}/.test(d) && ex && ex !== "운동 종목") {
-      var key = makeNormKey(d, ex, r[3]);
+      var key = makeNormKey(d, ex, r[3], r[1], r[10]);
       if (seenKeys[key]) {
         rowsToDelete.push(i + 1);
       } else {
@@ -1125,6 +1423,14 @@ function removeDuplicateRows() {
       { id: 'dc', name: '덤벨 컬', category: '팔', icon: '💪', defaultRestSec: 45 }
     ];
 
+    const DEFAULT_CARDIO_TYPES = [
+      { id: 'treadmill', name: '러닝머신', icon: '🏃' },
+      { id: 'outdoor_run', name: '야외 러닝', icon: '🛣️' },
+      { id: 'cycle', name: '실내 사이클', icon: '🚴' },
+      { id: 'stairmaster', name: '스텝밀', icon: '🪜' },
+      { id: 'rowing', name: '로잉머신', icon: '🚣' }
+    ];
+
     const state = {
       view: 'workout',
       step: 'select',
@@ -1166,15 +1472,192 @@ function removeDuplicateRows() {
       wakeLockSentinel: null,
 
       history: [],
+      lastCompletedSessionId: null,
       historyPeriodFilter: 'ALL', // 'ALL', '7D', '1M'
+      historyTypeFilter: 'ALL', // 'ALL', 'weight', 'cardio'
       historyPageSize: 10,
       historyCurrentPage: 1,
+
+      // Cardio State
+      cardioMode: 'manual', // 'manual' | 'timer'
+      cardioSelectedType: '러닝머신',
+      cardioListFilter: 'ALL',
+      editingCardioId: null,
+      cardioTimerRunning: false,
+      cardioTimerStartMs: null,
+      cardioTimerAccumulatedMs: 0,
+      cardioTimerInterval: null,
 
       gasWebhookUrl: '',
       isMuted: false,
       isFetchingSheets: false,
       isUploadingToSheets: false
     };
+
+    // ==============================================
+    // CARDIO & DATE/FORMAT HELPERS
+    // ==============================================
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getLocalDateStr(date = new Date()) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function getLocalTimeStr(date = new Date()) {
+      const hh = String(date.getHours()).padStart(2, '0');
+      const mm = String(date.getMinutes()).padStart(2, '0');
+      return `${hh}:${mm}`;
+    }
+
+    function normalizeSheetDate(dateStr) {
+      const s = String(dateStr || '').trim();
+      const m = s.match(/^(\d{4})\s*[-./]\s*(\d{1,2})\s*[-./]\s*(\d{1,2})/);
+      if (!m) return s;
+      return `${m[1]}-${String(parseInt(m[2], 10)).padStart(2, '0')}-${String(parseInt(m[3], 10)).padStart(2, '0')}`;
+    }
+
+    function normalizeSheetTime(timeStr) {
+      const s = String(timeStr || '').trim();
+      if (!s) return '';
+      const isPM = /(오후|PM)/i.test(s);
+      const isAM = /(오전|AM)/i.test(s);
+      const m = s.match(/(\d{1,2})\s*:\s*(\d{1,2})/);
+      if (!m) return s;
+      let hh = parseInt(m[1], 10);
+      const mm = parseInt(m[2], 10);
+      if (isNaN(hh) || isNaN(mm)) return s;
+      if (isPM && hh < 12) hh += 12;
+      else if (isAM && hh === 12) hh = 0;
+      return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+    }
+
+    function parseLocalDate(dateStr) {
+      const clean = String(dateStr || '').trim();
+      const m = clean.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+      if (m) {
+        return new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10));
+      }
+      const parsed = new Date(clean);
+      return isNaN(parsed.getTime()) ? new Date(0) : parsed;
+    }
+
+    function isCardioSession(h) {
+      return Boolean(h && (h.type === 'cardio' || h.category === '유산소'));
+    }
+
+    function getCardioIcon(name) {
+      const found = DEFAULT_CARDIO_TYPES.find(t => t.name === name);
+      if (found) return found.icon;
+      if (String(name || '').includes('사이클') || String(name || '').includes('자전거')) return '🚴';
+      if (String(name || '').includes('로잉')) return '🚣';
+      if (String(name || '').includes('스텝') || String(name || '').includes('계단')) return '🪜';
+      if (String(name || '').includes('야외')) return '🛣️';
+      return '🏃';
+    }
+
+    function formatCardioDuration(totalSec) {
+      const secVal = Math.max(0, Number(totalSec) || 0);
+      if (secVal <= 0) return "00'00";
+      const totalTenths = Math.round(secVal * 10);
+      const wholeSec = Math.floor(totalTenths / 10);
+      const frac = totalTenths % 10;
+      const fracStr = frac > 0 ? '.' + frac : '';
+      if (wholeSec >= 3600) {
+        const hrs = Math.floor(wholeSec / 3600);
+        const mins = Math.floor((wholeSec % 3600) / 60);
+        const secs = wholeSec % 60;
+        return `${hrs}:${String(mins).padStart(2, '0')}'${String(secs).padStart(2, '0')}${fracStr}`;
+      }
+      const mins = Math.floor(wholeSec / 60);
+      const secs = wholeSec % 60;
+      return `${String(mins).padStart(2, '0')}'${String(secs).padStart(2, '0')}${fracStr}`;
+    }
+
+    function formatDurationHMS(totalSec) {
+      const whole = Math.max(0, Math.round(Number(totalSec) || 0));
+      const hrs = Math.floor(whole / 3600);
+      const mins = Math.floor((whole % 3600) / 60);
+      const secs = whole % 60;
+      return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function parseCardioDurationStr(str) {
+      const s = String(str || '').trim();
+      if (!s) return 0;
+      let m = s.match(/^(\d+):(\d{1,2})'(\d{1,2}(?:\.\d+)?)$/);
+      if (m) return parseInt(m[1], 10) * 3600 + parseInt(m[2], 10) * 60 + parseFloat(m[3]);
+      m = s.match(/^(\d+)'(\d{1,2}(?:\.\d+)?)$/);
+      if (m) return parseInt(m[1], 10) * 60 + parseFloat(m[2]);
+      m = s.match(/^(\d+):(\d{1,2}):(\d{1,2}(?:\.\d+)?)$/);
+      if (m) return parseInt(m[1], 10) * 3600 + parseInt(m[2], 10) * 60 + parseFloat(m[3]);
+      m = s.match(/^(\d+):(\d{1,2}(?:\.\d+)?)$/);
+      if (m) return parseInt(m[1], 10) * 60 + parseFloat(m[2]);
+      return parseFloat(s) || 0;
+    }
+
+    function formatPace(secPerKm) {
+      if (!secPerKm || !isFinite(secPerKm) || secPerKm <= 0) return '-';
+      const total = Math.round(secPerKm);
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      return `${m}'${String(s).padStart(2, '0')}"/km`;
+    }
+
+    function getHeartRateZone(bpm) {
+      const hr = parseInt(bpm, 10) || 0;
+      if (hr <= 0) return null;
+      if (hr < 130) return { zone: 1, label: 'Zone 1 · 회복/웜업', cls: 'bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20' };
+      if (hr < 150) return { zone: 2, label: 'Zone 2 · 유산소 회복', cls: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25' };
+      if (hr < 165) return { zone: 3, label: 'Zone 3 · 유산소 템포', cls: 'bg-[#3182F6]/10 text-[#3182F6] border-[#3182F6]/25' };
+      if (hr < 175) return { zone: 4, label: 'Zone 4 · 역치 인터벌', cls: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25' };
+      return { zone: 5, label: 'Zone 5 · 최대 심박', cls: 'bg-rose-500/10 text-rose-500 border-rose-500/25' };
+    }
+
+    function formatCardioSheetNote(session) {
+      const parts = [];
+      parts.push(`거리:${(Number(session.distanceKm) || 0).toFixed(2)}km`);
+      if (session.avgHr && session.avgHr > 0) {
+        parts.push(`심박:${Math.round(session.avgHr)}bpm`);
+      }
+      if (session.paceSecPerKm && session.paceSecPerKm > 0) {
+        parts.push(`페이스:${formatPace(session.paceSecPerKm)}`);
+      }
+      if (session.notes && String(session.notes).trim()) {
+        parts.push(`메모:${String(session.notes).trim().replace(/\|/g, '/')}`);
+      }
+      return `[유산소] ${parts.join(' | ')}`;
+    }
+
+    function parseCardioSheetNote(noteStr) {
+      const str = String(noteStr || '');
+      const distMatch = str.match(/거리:\s*([0-9.]+)\s*km/i);
+      const hrMatch = str.match(/심박:\s*(\d+)\s*bpm/i);
+      const memoMatch = str.match(/메모:\s*(.+)$/);
+      return {
+        distanceKm: distMatch ? parseFloat(distMatch[1]) || 0 : 0,
+        avgHr: hrMatch ? parseInt(hrMatch[1], 10) || null : null,
+        notes: memoMatch ? memoMatch[1].trim() : ''
+      };
+    }
+
+    function sortHistoryDesc() {
+      state.history.sort((a, b) => {
+        const keyA = `${a.date || ''} ${a.time || '00:00'}`;
+        const keyB = `${b.date || ''} ${b.time || '00:00'}`;
+        if (keyB !== keyA) return keyB.localeCompare(keyA);
+        return String(b.id || '').localeCompare(String(a.id || ''));
+      });
+    }
 
     // Screen Wake Lock API (화면 꺼짐 방지)
     async function requestWakeLock() {
@@ -1217,7 +1700,7 @@ function removeDuplicateRows() {
     // 화면 복귀 시 Wake Lock 자동 재요청
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        if (state.step === 'active' || state.step === 'rest') {
+        if (state.step === 'active' || state.step === 'rest' || state.cardioTimerRunning) {
           requestWakeLock();
         }
       }
@@ -1332,6 +1815,7 @@ function removeDuplicateRows() {
       // Re-render components that may depend on theme colors
       if (typeof renderActivityHeatmap === 'function') renderActivityHeatmap();
       if (typeof renderWeeklyVolumeBars === 'function') renderWeeklyVolumeBars();
+      if (typeof renderWeeklyCardioBars === 'function') renderWeeklyCardioBars();
       showToast(isDark ? '다크 모드로 전환되었어요' : '라이트 모드로 전환되었어요', true);
     }
 
@@ -1667,6 +2151,26 @@ function removeDuplicateRows() {
 
       updatePlanSummary();
       updateRestChipsUI();
+    }
+
+    function updateRestChipsUI() {
+      const sec = parseInt(state.selectedRestSec, 10) || 60;
+      if (state.activePlanTabExId && state.exerciseConfigs[state.activePlanTabExId]) {
+        state.exerciseConfigs[state.activePlanTabExId].selectedRestSec = sec;
+      }
+      const labelEl = document.getElementById('plan-selected-rest-label');
+      if (labelEl) labelEl.textContent = `${sec}초`;
+      const summaryEl = document.getElementById('summary-rest-duration');
+      if (summaryEl) summaryEl.textContent = `${sec} 초`;
+
+      document.querySelectorAll('.rest-chip').forEach(chip => {
+        const chipSec = parseInt(chip.dataset.sec, 10) || 0;
+        if (chipSec === sec) {
+          chip.className = 'rest-chip active py-1 rounded-lg text-[11px] font-mono-num font-bold bg-[#3182F6] text-white transition-all text-center';
+        } else {
+          chip.className = 'rest-chip py-1 rounded-lg text-[11px] font-mono-num font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all text-center';
+        }
+      });
     }
 
     function applyLastRecordToPlan() {
@@ -2016,8 +2520,9 @@ function removeDuplicateRows() {
 
       const sessionLog = {
         id: 'sess_' + Date.now(),
-        date: state.workoutStartTime.toISOString().split('T')[0],
-        time: state.workoutStartTime.toTimeString().split(' ')[0].substring(0, 5),
+        type: 'weight',
+        date: getLocalDateStr(state.workoutStartTime),
+        time: getLocalTimeStr(state.workoutStartTime),
         exercise: sessionExerciseTitle,
         exercises: state.selectedExercises.map(e => e.name),
         category: isMulti ? '복합' : state.selectedExercises[0].category,
@@ -2030,6 +2535,7 @@ function removeDuplicateRows() {
         sets: allSets
       };
 
+      state.lastCompletedSessionId = sessionLog.id;
       state.history.unshift(sessionLog);
       saveHistory();
 
@@ -2144,21 +2650,43 @@ function removeDuplicateRows() {
       updateSyncButtonUI(sessionLog);
 
       const rows = [];
-      sessionLog.sets.forEach(s => {
+      if (isCardioSession(sessionLog)) {
+        const sameDaySameEx = state.history
+          .filter(h => isCardioSession(h) && h.date === sessionLog.date && h.exercise === sessionLog.exercise)
+          .slice()
+          .sort((a, b) => String(a.time || '').localeCompare(String(b.time || '')) || String(a.id || '').localeCompare(String(b.id || '')));
+        const seqIdx = sameDaySameEx.findIndex(h => h.id === sessionLog.id);
+        const seqNum = seqIdx >= 0 ? seqIdx + 1 : 1;
         rows.push([
           sessionLog.date,
           sessionLog.time,
-          s.exercise || sessionLog.exercise,
-          s.setNum,
-          s.targetWeight,
-          s.targetReps,
-          s.actualWeight,
-          s.actualReps,
-          s.actualWeight * s.actualReps,
-          sessionLog.duration,
-          'GitHub Pages 자동 기록'
+          sessionLog.exercise,
+          seqNum,
+          0,
+          0,
+          0,
+          0,
+          0,
+          sessionLog.duration || formatCardioDuration(sessionLog.durationSec),
+          formatCardioSheetNote(sessionLog)
         ]);
-      });
+      } else {
+        (sessionLog.sets || []).forEach(s => {
+          rows.push([
+            sessionLog.date,
+            sessionLog.time,
+            s.exercise || sessionLog.exercise,
+            s.setNum,
+            s.targetWeight,
+            s.targetReps,
+            s.actualWeight,
+            s.actualReps,
+            s.actualWeight * s.actualReps,
+            sessionLog.duration,
+            'GitHub Pages 자동 기록'
+          ]);
+        });
+      }
 
       showToast('구글 시트로 전송 중...', true);
 
@@ -2172,6 +2700,8 @@ function removeDuplicateRows() {
         sessionLog.synced = true;
         saveHistory();
         updateSyncButtonUI(sessionLog);
+        if (state.view === 'cardio') renderCardioView();
+        if (state.view === 'history') renderHistoryView();
         showToast('구글 시트에 저장되었습니다! 🎉', true);
       }).catch(err => {
         console.error(err);
@@ -2211,7 +2741,7 @@ function removeDuplicateRows() {
         })
         .then(res => {
           state.isFetchingSheets = false;
-          fetchText.textContent = '🔄 시트 동기화';
+          fetchText.textContent = '🔄 시트';
           fetchSpinner.classList.add('hidden');
           fetchSpinner.classList.remove('inline-block', 'spinning');
 
@@ -2235,7 +2765,7 @@ function removeDuplicateRows() {
         .catch(err => {
           console.error('Fetch error:', err);
           state.isFetchingSheets = false;
-          fetchText.textContent = '🔄 시트 동기화';
+          fetchText.textContent = '🔄 시트';
           fetchSpinner.classList.add('hidden');
           fetchSpinner.classList.remove('inline-block', 'spinning');
           showToast('동기화 실패: Apps Script의 [신규 버전] 배포 여부를 확인해주세요.', false);
@@ -2248,11 +2778,52 @@ function removeDuplicateRows() {
       if (!sheetRows || sheetRows.length === 0) return;
 
       const sessionMap = new Map();
+      const cardioKeywords = DEFAULT_CARDIO_TYPES.map(t => t.name).concat(['러닝', '트레드밀', '사이클', '조깅']);
 
       sheetRows.forEach(row => {
-        const d = String(row.date || '').trim();
+        const d = normalizeSheetDate(row.date);
         const ex = String(row.exercise || '').trim();
         if (!d || !ex) return;
+
+        const normTime = normalizeSheetTime(row.time);
+        const timeStr = normTime || '12:00';
+        const notesStr = String(row.notes || '').trim();
+        const rawActWt = parseFloat(row.actualWeight) || 0;
+        const rawActReps = parseInt(row.actualReps, 10) || 0;
+        const isCardioRow = notesStr.includes('[유산소]') || (cardioKeywords.some(k => ex.includes(k)) && rawActWt === 0 && rawActReps === 0);
+
+        if (isCardioRow) {
+          const parsed = parseCardioSheetNote(notesStr);
+          const durationSec = parseCardioDurationStr(row.duration);
+          const distanceKm = parsed.distanceKm;
+          const paceSecPerKm = (distanceKm > 0 && durationSec > 0) ? Math.round(durationSec / distanceKm) : 0;
+          const avgSpeedKmh = (distanceKm > 0 && durationSec > 0) ? Math.round((distanceKm / (durationSec / 3600)) * 10) / 10 : 0;
+          const cardioKey = `${d}__${ex}__${timeStr || row.setNum}`;
+
+          sessionMap.set(cardioKey, {
+            id: 'cardio_sheet_' + cardioKey.replace(/[^a-zA-Z0-9가-힣]/g, '_'),
+            type: 'cardio',
+            date: d,
+            time: timeStr,
+            exercise: ex,
+            category: '유산소',
+            distanceKm,
+            durationSec,
+            duration: durationSec > 0 ? formatCardioDuration(durationSec) : (row.duration || "00'00"),
+            durationHms: formatDurationHMS(durationSec),
+            avgHr: parsed.avgHr,
+            paceSecPerKm,
+            avgSpeedKmh,
+            notes: parsed.notes,
+            totalSets: 1,
+            totalVolume: 0,
+            maxWeight: 0,
+            estimated1RM: 0,
+            synced: true,
+            sets: []
+          });
+          return;
+        }
 
         const groupKey = `${d}__${ex}`;
 
@@ -2267,8 +2838,9 @@ function removeDuplicateRows() {
 
           sessionMap.set(groupKey, {
             id: 'sess_' + groupKey.replace(/[^a-zA-Z0-9가-힣]/g, '_'),
+            type: 'weight',
             date: d,
-            time: row.time || '12:00',
+            time: timeStr,
             exercise: ex,
             category: cat,
             duration: row.duration && row.duration !== '' ? row.duration : '00:08:00',
@@ -2297,6 +2869,10 @@ function removeDuplicateRows() {
 
       const parsedSessions = [];
       sessionMap.forEach(sess => {
+        if (isCardioSession(sess)) {
+          parsedSessions.push(sess);
+          return;
+        }
         sess.totalSets = sess.sets.length;
         sess.synced = true;
         let vol = 0;
@@ -2313,46 +2889,70 @@ function removeDuplicateRows() {
       // 로컬에만 있고 아직 시트에 미동기화된 세션(synced === false) 보존
       const localUnsynced = state.history.filter(h => h && h.synced === false);
       localUnsynced.forEach(localSess => {
-        const key = `${localSess.date}__${localSess.exercise}`;
-        if (!sessionMap.has(key)) {
-          parsedSessions.push(localSess);
+        if (isCardioSession(localSess)) {
+          const cKey = `${localSess.date}__${localSess.exercise}__${localSess.time || '12:00'}`;
+          if (!sessionMap.has(cKey)) {
+            parsedSessions.push(localSess);
+          }
+        } else if (Array.isArray(localSess.exercises) && localSess.exercises.length > 1) {
+          const allMatched = localSess.exercises.every(exName => sessionMap.has(`${localSess.date}__${exName}`));
+          if (!allMatched) {
+            parsedSessions.push(localSess);
+          }
+        } else {
+          const wKey = `${localSess.date}__${localSess.exercise}`;
+          if (!sessionMap.has(wKey)) {
+            parsedSessions.push(localSess);
+          }
         }
       });
 
-      parsedSessions.sort((a, b) => {
-        const tA = new Date(`${a.date}T${a.time || '00:00'}`).getTime() || 0;
-        const tB = new Date(`${b.date}T${b.time || '00:00'}`).getTime() || 0;
-        return tB - tA;
-      });
-
       state.history = parsedSessions;
+      sortHistoryDesc();
       saveHistory();
       renderHistoryView();
+      renderCardioView();
     }
 
     function copyForGoogleSheets() {
-      const curSession = state.history[0];
+      const curSession = state.history.find(h => h.id === state.lastCompletedSessionId) || state.history[0];
       if (!curSession) {
         showToast('복사할 운동 세션이 없습니다.', false);
         return;
       }
 
       const rows = [];
-      curSession.sets.forEach(s => {
+      if (isCardioSession(curSession)) {
         rows.push([
           curSession.date,
           curSession.time,
           curSession.exercise,
-          s.setNum,
-          s.targetWeight,
-          s.targetReps,
-          s.actualWeight,
-          s.actualReps,
-          s.actualWeight * s.actualReps,
-          curSession.duration,
-          '앱 자동 기록'
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          curSession.duration || formatCardioDuration(curSession.durationSec),
+          formatCardioSheetNote(curSession)
         ].join('\t'));
-      });
+      } else {
+        (curSession.sets || []).forEach(s => {
+          rows.push([
+            curSession.date,
+            curSession.time,
+            s.exercise || curSession.exercise,
+            s.setNum,
+            s.targetWeight,
+            s.targetReps,
+            s.actualWeight,
+            s.actualReps,
+            s.actualWeight * s.actualReps,
+            curSession.duration,
+            '앱 자동 기록'
+          ].join('\t'));
+        });
+      }
 
       const tsvContent = rows.join('\n');
 
@@ -2396,27 +2996,33 @@ function removeDuplicateRows() {
 
     function switchView(viewName) {
       state.view = viewName;
-      ['workout', 'history', 'settings', 'exercises'].forEach(v => {
+      ['workout', 'cardio', 'history', 'settings', 'exercises'].forEach(v => {
         const el = document.getElementById(`view-${v}`);
         const tab = document.getElementById(`tab-nav-${v}`);
+        if (!el || !tab) return;
         if (v === viewName) {
           el.classList.remove('hidden');
-          tab.classList.add('active', 'border-emerald-500', 'text-[#3182F6]');
-          tab.classList.remove('border-transparent', 'text-[var(--text-muted)]');
+          tab.classList.add('active', 'border-[#3182F6]', 'text-[#3182F6]');
+          tab.classList.remove('border-transparent', 'text-[var(--text-secondary)]', 'text-[var(--text-muted)]');
         } else {
           el.classList.add('hidden');
-          tab.classList.remove('active', 'border-emerald-500', 'text-[#3182F6]');
-          tab.classList.add('border-transparent', 'text-[var(--text-muted)]');
+          tab.classList.remove('active', 'border-[#3182F6]', 'border-emerald-500', 'text-[#3182F6]');
+          tab.classList.add('border-transparent', 'text-[var(--text-secondary)]');
         }
       });
 
+      if (viewName === 'cardio') {
+        renderCardioView();
+      }
       if (viewName === 'history') {
         renderHistoryView();
         const alertBox = document.getElementById('history-no-url-alert');
-        if (!state.gasWebhookUrl) {
-          alertBox.classList.remove('hidden');
-        } else {
-          alertBox.classList.add('hidden');
+        if (alertBox) {
+          if (!state.gasWebhookUrl) {
+            alertBox.classList.remove('hidden');
+          } else {
+            alertBox.classList.add('hidden');
+          }
         }
       }
       if (viewName === 'exercises') renderExerciseMgmtList();
@@ -2428,24 +3034,33 @@ function removeDuplicateRows() {
 
     // Filtered History Helper
     function getFilteredHistory() {
-      const all = state.history;
-      if (state.historyPeriodFilter === 'ALL') return all;
+      let list = state.history;
+
+      if (state.historyTypeFilter === 'weight') {
+        list = list.filter(h => !isCardioSession(h));
+      } else if (state.historyTypeFilter === 'cardio') {
+        list = list.filter(h => isCardioSession(h));
+      }
+
+      if (state.historyPeriodFilter === 'ALL') return list;
 
       const now = new Date();
+      const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       if (state.historyPeriodFilter === '7D') {
-        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return all.filter(h => {
+        const sevenDaysAgo = new Date(todayMidnight);
+        sevenDaysAgo.setDate(todayMidnight.getDate() - 6);
+        return list.filter(h => {
           if (!h.date) return false;
-          const d = new Date(h.date);
+          const d = parseLocalDate(h.date);
           return d >= sevenDaysAgo;
         });
       } else if (state.historyPeriodFilter === '1M') {
         const curYear = now.getFullYear();
         const curMonth = String(now.getMonth() + 1).padStart(2, '0');
         const prefix = `${curYear}-${curMonth}`;
-        return all.filter(h => (h.date || '').startsWith(prefix));
+        return list.filter(h => (h.date || '').startsWith(prefix));
       }
-      return all;
+      return list;
     }
 
     function renderHistoryView() {
@@ -2453,15 +3068,36 @@ function removeDuplicateRows() {
       const totalSessions = filtered.length;
       let totalVolume = 0;
       let totalSets = 0;
+      let totalCardioKm = 0;
+      let cardioCount = 0;
+      let cardioHrSum = 0;
+      let cardioHrCount = 0;
 
       filtered.forEach(h => {
-        totalVolume += (h.totalVolume || 0);
-        totalSets += (h.totalSets || 0);
+        if (isCardioSession(h)) {
+          cardioCount++;
+          totalCardioKm += (Number(h.distanceKm) || 0);
+          if (h.avgHr && h.avgHr > 0) {
+            cardioHrSum += Number(h.avgHr);
+            cardioHrCount++;
+          }
+        } else {
+          totalVolume += (h.totalVolume || 0);
+          totalSets += (h.totalSets || 0);
+        }
       });
 
       document.getElementById('history-total-sessions').textContent = totalSessions;
       document.getElementById('history-total-volume').textContent = `${totalVolume.toLocaleString()} kg`;
       document.getElementById('history-total-sets').textContent = totalSets;
+
+      const cardioKmEl = document.getElementById('history-total-cardio-km');
+      const cardioMetaEl = document.getElementById('history-total-cardio-meta');
+      if (cardioKmEl) cardioKmEl.textContent = `${totalCardioKm.toFixed(2)} km`;
+      if (cardioMetaEl) {
+        const avgHrStr = cardioHrCount > 0 ? `${Math.round(cardioHrSum / cardioHrCount)} bpm` : '-';
+        cardioMetaEl.textContent = `${cardioCount}회 · ${avgHrStr}`;
+      }
 
       const filterCountBadge = document.getElementById('history-filter-count-badge');
       if (filterCountBadge) {
@@ -2471,41 +3107,49 @@ function removeDuplicateRows() {
       // Render Visual Dashboard Components
       renderActivityHeatmap();
       renderWeeklyVolumeBars();
+      renderWeeklyCardioBars();
       renderCategoryBalance(filtered);
 
       // Render Paged History Items
       renderHistoryListPaged(filtered);
     }
 
-    // 1. Dashboard: Activity Heatmap (최근 10주간 잔디 심기)
+    // 1. Dashboard: Activity Heatmap (최근 10주간 잔디 심기 - 웨이트 + 유산소 통합)
     function renderActivityHeatmap() {
       const container = document.getElementById('dashboard-heatmap');
       if (!container) return;
       container.innerHTML = '';
 
-      // Date to Volume Map
-      const dateVolMap = {};
+      const dayMap = {};
       state.history.forEach(h => {
-        if (h.date) {
-          dateVolMap[h.date] = (dateVolMap[h.date] || 0) + (h.totalVolume || 0);
+        if (!h.date) return;
+        if (!dayMap[h.date]) {
+          dayMap[h.date] = { count: 0, vol: 0, cardioKm: 0, cardioSec: 0 };
+        }
+        dayMap[h.date].count++;
+        if (isCardioSession(h)) {
+          dayMap[h.date].cardioKm += (Number(h.distanceKm) || 0);
+          dayMap[h.date].cardioSec += (Number(h.durationSec) || 0);
+        } else {
+          dayMap[h.date].vol += (Number(h.totalVolume) || 0);
         }
       });
 
-      // Calculate 70 days (10 weeks) ending today
-      const today = new Date();
+      // Calculate 70 days (10 weeks) ending today (local time)
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const startDate = new Date(today);
-      startDate.setDate(today.getDate() - 69); // 70 days total
+      startDate.setDate(today.getDate() - 69);
 
-      // Calculate current streak
+      // Calculate current streak (weight OR cardio)
       let streak = 0;
       const checkDate = new Date(today);
       for (let i = 0; i < 70; i++) {
-        const dStr = checkDate.toISOString().split('T')[0];
-        if (dateVolMap[dStr] && dateVolMap[dStr] > 0) {
+        const dStr = getLocalDateStr(checkDate);
+        if (dayMap[dStr] && dayMap[dStr].count > 0) {
           streak++;
           checkDate.setDate(checkDate.getDate() - 1);
         } else {
-          // If today has no workout yet, check yesterday before breaking streak
           if (i === 0) {
             checkDate.setDate(checkDate.getDate() - 1);
             continue;
@@ -2516,7 +3160,6 @@ function removeDuplicateRows() {
       const streakLabel = document.getElementById('heatmap-streak-label');
       if (streakLabel) streakLabel.textContent = `${streak}일 연속 운동 중 🔥`;
 
-      // Group days into 10 columns (weeks) of 7 days
       let curCol = null;
       for (let i = 0; i < 70; i++) {
         if (i % 7 === 0) {
@@ -2527,22 +3170,30 @@ function removeDuplicateRows() {
 
         const iterDate = new Date(startDate);
         iterDate.setDate(startDate.getDate() + i);
-        const dateStr = iterDate.toISOString().split('T')[0];
-        const vol = dateVolMap[dateStr] || 0;
+        const dateStr = getLocalDateStr(iterDate);
+        const info = dayMap[dateStr];
+        const score = info
+          ? info.vol + info.cardioKm * 500 + (info.cardioKm === 0 && info.cardioSec > 0 ? (info.cardioSec / 60) * 80 : 0)
+          : 0;
 
-        let colorCls = 'bg-slate-800';
-        if (vol > 4000) colorCls = 'bg-emerald-400';
-        else if (vol > 1500) colorCls = 'bg-emerald-600';
-        else if (vol > 0) colorCls = 'bg-emerald-900';
+        let colorCls = 'bg-[var(--border-subtle)]';
+        if (score > 4000) colorCls = 'bg-[#3182F6]';
+        else if (score > 1500) colorCls = 'bg-blue-400 dark:bg-blue-600';
+        else if (info && info.count > 0) colorCls = 'bg-blue-200 dark:bg-blue-950';
+
+        const tipParts = [];
+        if (info && info.vol > 0) tipParts.push(`${info.vol.toLocaleString()} kg`);
+        if (info && info.cardioKm > 0) tipParts.push(`${info.cardioKm.toFixed(2)} km`);
+        else if (info && info.cardioSec > 0) tipParts.push(formatCardioDuration(info.cardioSec));
 
         const tile = document.createElement('div');
         tile.className = `w-3 h-3 rounded-sm ${colorCls} transition-all hover:scale-125 cursor-pointer`;
-        tile.title = `${dateStr}: ${vol > 0 ? vol.toLocaleString() + ' kg' : '운동 기록 없음'}`;
+        tile.title = `${dateStr}: ${tipParts.length > 0 ? tipParts.join(' · ') : '운동 기록 없음'}`;
         curCol.appendChild(tile);
       }
     }
 
-    // 2. Dashboard: Weekly Volume Bars (최근 4주 볼륨 추이)
+    // 2. Dashboard: Weekly Volume Bars (최근 4주 웨이트 볼륨 추이)
     function renderWeeklyVolumeBars() {
       const container = document.getElementById('dashboard-weekly-volume');
       if (!container) return;
@@ -2556,10 +3207,11 @@ function removeDuplicateRows() {
       ];
 
       const now = new Date();
+      const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       state.history.forEach(h => {
-        if (!h.date) return;
-        const d = new Date(h.date);
-        const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+        if (!h.date || isCardioSession(h)) return;
+        const d = parseLocalDate(h.date);
+        const diffDays = Math.floor((todayMidnight - d) / (1000 * 60 * 60 * 24));
         if (diffDays >= 0 && diffDays < 7) weeks[0].vol += (h.totalVolume || 0);
         else if (diffDays >= 7 && diffDays < 14) weeks[1].vol += (h.totalVolume || 0);
         else if (diffDays >= 14 && diffDays < 21) weeks[2].vol += (h.totalVolume || 0);
@@ -2583,7 +3235,59 @@ function removeDuplicateRows() {
       });
     }
 
-    // 3. Dashboard: Category Balance (부위별 밸런스 비중)
+    // 2.5. Dashboard: Weekly Cardio Distance Trend (최근 4주 유산소 거리 추이)
+    function renderWeeklyCardioBars() {
+      const container = document.getElementById('dashboard-weekly-cardio');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const weeks = [
+        { label: '이번 주', km: 0, count: 0, hrSum: 0, hrCount: 0 },
+        { label: '1주 전', km: 0, count: 0, hrSum: 0, hrCount: 0 },
+        { label: '2주 전', km: 0, count: 0, hrSum: 0, hrCount: 0 },
+        { label: '3주 전', km: 0, count: 0, hrSum: 0, hrCount: 0 }
+      ];
+
+      const now = new Date();
+      const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      state.history.forEach(h => {
+        if (!h.date || !isCardioSession(h)) return;
+        const d = parseLocalDate(h.date);
+        const diffDays = Math.floor((todayMidnight - d) / (1000 * 60 * 60 * 24));
+        let idx = -1;
+        if (diffDays >= 0 && diffDays < 7) idx = 0;
+        else if (diffDays >= 7 && diffDays < 14) idx = 1;
+        else if (diffDays >= 14 && diffDays < 21) idx = 2;
+        else if (diffDays >= 21 && diffDays < 28) idx = 3;
+        if (idx >= 0) {
+          weeks[idx].km += (Number(h.distanceKm) || 0);
+          weeks[idx].count++;
+          if (h.avgHr && h.avgHr > 0) {
+            weeks[idx].hrSum += Number(h.avgHr);
+            weeks[idx].hrCount++;
+          }
+        }
+      });
+
+      const maxKm = Math.max(...weeks.map(w => w.km), 1);
+
+      weeks.forEach(w => {
+        const pct = Math.min(100, Math.round((w.km / maxKm) * 100));
+        const avgHrLabel = w.hrCount > 0 ? ` · ${Math.round(w.hrSum / w.hrCount)}bpm` : '';
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 text-[10px] font-mono-num';
+        row.innerHTML = `
+          <span class="w-12 text-[var(--text-muted)] text-right">${w.label}</span>
+          <div class="flex-1 bg-[var(--bg-surface)] h-3 rounded-full overflow-hidden p-0.5 border border-[var(--border-subtle)]">
+            <div class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+          </div>
+          <span class="w-24 text-right font-bold ${w.km > 0 ? 'text-amber-500' : 'text-[var(--text-muted)]'}" title="${w.count}회${avgHrLabel}">${w.km.toFixed(2)}km (${w.count}회)</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // 3. Dashboard: Category Balance (부위별 밸런스 비중 + 유산소 요약)
     function renderCategoryBalance(historyList) {
       const container = document.getElementById('dashboard-category-balance');
       if (!container) return;
@@ -2591,9 +3295,33 @@ function removeDuplicateRows() {
 
       const cats = { '가슴': 0, '하체': 0, '등': 0, '어깨': 0, '팔': 0 };
       let totalCatVolume = 0;
+      let cardioCount = 0;
+      let cardioKm = 0;
+      let cardioHrSum = 0;
+      let cardioHrCount = 0;
 
       historyList.forEach(h => {
+        if (isCardioSession(h)) {
+          cardioCount++;
+          cardioKm += (Number(h.distanceKm) || 0);
+          if (h.avgHr && h.avgHr > 0) {
+            cardioHrSum += Number(h.avgHr);
+            cardioHrCount++;
+          }
+          return;
+        }
         const cat = h.category || '기타';
+        if (cat === '복합' && Array.isArray(h.sets) && h.sets.length > 0) {
+          h.sets.forEach(s => {
+            const sCat = s.category || '기타';
+            const sVol = (Number(s.actualWeight) || 0) * (Number(s.actualReps) || 0);
+            if (cats[sCat] !== undefined) {
+              cats[sCat] += sVol;
+              totalCatVolume += sVol;
+            }
+          });
+          return;
+        }
         const vol = h.totalVolume || 0;
         if (cats[cat] !== undefined) {
           cats[cat] += vol;
@@ -2601,7 +3329,7 @@ function removeDuplicateRows() {
         }
       });
 
-      if (totalCatVolume === 0) {
+      if (totalCatVolume === 0 && cardioCount === 0) {
         container.innerHTML = '<div class="text-[10px] text-[var(--text-muted)] text-center py-1">조회 기간 운동 기록이 없습니다.</div>';
         return;
       }
@@ -2614,22 +3342,35 @@ function removeDuplicateRows() {
         '팔': 'bg-indigo-400'
       };
 
-      const sortedCats = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+      if (totalCatVolume > 0) {
+        const sortedCats = Object.entries(cats).sort((a, b) => b[1] - a[1]);
 
-      sortedCats.forEach(([cat, vol]) => {
-        const pct = totalCatVolume > 0 ? Math.round((vol / totalCatVolume) * 100) : 0;
-        const color = catColors[cat] || 'bg-slate-400';
-        const row = document.createElement('div');
-        row.className = 'flex items-center gap-2 text-[10px]';
-        row.innerHTML = `
-          <span class="w-8 text-[var(--text-secondary)] font-bold">${cat}</span>
-          <div class="flex-1 bg-[var(--bg-surface)] h-2.5 rounded-full overflow-hidden border border-[var(--border-subtle)]">
-            <div class="${color} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
-          </div>
-          <span class="w-14 text-right font-mono-num text-[var(--text-muted)] font-semibold">${pct}% (${vol.toLocaleString()}kg)</span>
+        sortedCats.forEach(([cat, vol]) => {
+          const pct = totalCatVolume > 0 ? Math.round((vol / totalCatVolume) * 100) : 0;
+          const color = catColors[cat] || 'bg-slate-400';
+          const row = document.createElement('div');
+          row.className = 'flex items-center gap-2 text-[10px]';
+          row.innerHTML = `
+            <span class="w-8 text-[var(--text-secondary)] font-bold">${cat}</span>
+            <div class="flex-1 bg-[var(--bg-surface)] h-2.5 rounded-full overflow-hidden border border-[var(--border-subtle)]">
+              <div class="${color} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+            <span class="w-14 text-right font-mono-num text-[var(--text-muted)] font-semibold">${pct}% (${vol.toLocaleString()}kg)</span>
+          `;
+          container.appendChild(row);
+        });
+      }
+
+      if (cardioCount > 0) {
+        const avgHrLabel = cardioHrCount > 0 ? ` · 평균 ${Math.round(cardioHrSum / cardioHrCount)} bpm` : '';
+        const cardioSummaryRow = document.createElement('div');
+        cardioSummaryRow.className = 'mt-2 pt-2 border-t border-[var(--border-subtle)] flex items-center justify-between text-[10px]';
+        cardioSummaryRow.innerHTML = `
+          <span class="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">🏃 유산소</span>
+          <span class="font-mono-num font-bold text-[var(--text-primary)]">${cardioCount}회 · ${cardioKm.toFixed(2)} km${avgHrLabel}</span>
         `;
-        container.appendChild(row);
-      });
+        container.appendChild(cardioSummaryRow);
+      }
     }
 
     // Paged History List Rendering (DOM 대용량 렉 방지)
@@ -2658,6 +3399,15 @@ function removeDuplicateRows() {
       }
 
       visibleItems.forEach((h) => {
+        if (isCardioSession(h)) {
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = renderCardioCardHtml(h, { showActions: true });
+          if (wrapper.firstElementChild) {
+            container.appendChild(wrapper.firstElementChild);
+          }
+          return;
+        }
+
         const item = document.createElement('div');
         item.className = 'p-3 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] space-y-1.5 hover:border-[var(--border-subtle)] transition-colors';
         
@@ -2676,27 +3426,43 @@ function removeDuplicateRows() {
         }
 
         const est1rm = h.estimated1RM || (h.maxWeight ? calculate1RM(h.maxWeight, 8) : 0);
+        const safeId = escapeHtml(h.id);
+        const syncHtml = h.synced
+          ? `<span class="text-[9px] px-2 py-0.5 rounded-full bg-[#3182F6]/10 text-[#3182F6] border border-[#3182F6]/25 font-bold">✓ 시트</span>`
+          : `<button type="button" class="btn-weight-sync text-[9px] px-2 py-0.5 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] font-bold transition-colors" data-id="${safeId}">☁️ 시트</button>`;
 
         item.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#3182F6]/10 text-[#3182F6] border border-[#3182F6]/30 font-bold">${h.category || '웨이트'}</span>
-              <h3 class="text-xs font-bold text-[var(--text-primary)]">${h.exercise}</h3>
-              ${est1rm > 0 ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-[var(--bg-surface)] text-teal-300 font-mono-num border border-teal-500/20">1RM ~${est1rm}kg</span>` : ''}
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#3182F6]/10 text-[#3182F6] border border-[#3182F6]/30 font-bold shrink-0">${escapeHtml(h.category || '웨이트')}</span>
+              <h3 class="text-xs font-bold text-[var(--text-primary)] truncate">${escapeHtml(h.exercise)}</h3>
+              ${est1rm > 0 ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-[var(--bg-surface)] text-teal-500 dark:text-teal-300 font-mono-num border border-teal-500/20 shrink-0">1RM ~${est1rm}kg</span>` : ''}
             </div>
-            <span class="text-[10px] text-[var(--text-muted)] font-mono-num">${h.date} ${h.time}</span>
+            <div class="flex items-center gap-1.5 shrink-0">
+              ${syncHtml}
+              <span class="text-[10px] text-[var(--text-muted)] font-mono-num">${escapeHtml(h.date)} ${escapeHtml(h.time)}</span>
+            </div>
           </div>
 
           <div class="flex items-center justify-between text-[10px] text-[var(--text-secondary)] font-mono-num pt-0.5">
             <span>완료: <b class="text-[var(--text-primary)]">${h.totalSets}세트</b></span>
-            <span>볼륨: <b class="text-[#3182F6]">${h.totalVolume.toLocaleString()}kg</b></span>
-            <span>시간: <b class="text-[var(--text-secondary)]">${h.duration}</b></span>
+            <span>볼륨: <b class="text-[#3182F6]">${(h.totalVolume || 0).toLocaleString()}kg</b></span>
+            <span>시간: <b class="text-[var(--text-secondary)]">${escapeHtml(h.duration)}</b></span>
           </div>
 
           ${setsDetailHtml}
         `;
         container.appendChild(item);
       });
+
+      container.querySelectorAll('.btn-weight-sync').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = state.history.find(h => h.id === btn.dataset.id);
+          if (target) sendWorkoutToGoogleSheets(target, true);
+        });
+      });
+
+      bindCardioCardActions(container, true);
 
       if (loadMoreBox) {
         if (limit < filteredList.length) {
@@ -2715,7 +3481,7 @@ function removeDuplicateRows() {
       }
       const backupData = {
         app: 'WorkoutCoach',
-        version: '2.0',
+        version: '2.1',
         exportedAt: new Date().toISOString(),
         history: state.history,
         exercises: state.exercises,
@@ -2726,7 +3492,7 @@ function removeDuplicateRows() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `workout_coach_backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `workout_coach_backup_${getLocalDateStr()}.json`;
       a.click();
       URL.revokeObjectURL(url);
       showToast('JSON 데이터 백업 파일이 다운로드되었습니다! 💾', true);
@@ -2740,6 +3506,7 @@ function removeDuplicateRows() {
           const data = JSON.parse(e.target.result);
           if (data && Array.isArray(data.history)) {
             state.history = data.history;
+            sortHistoryDesc();
             saveHistory();
             if (Array.isArray(data.exercises)) {
               state.exercises = data.exercises;
@@ -2751,6 +3518,7 @@ function removeDuplicateRows() {
             }
             renderExerciseGrid();
             renderHistoryView();
+            renderCardioView();
             showToast(`백업 복원 완료! (총 ${data.history.length}개 세션)`, true);
           } else {
             showToast('올바르지 않은 백업 파일 형식입니다.', false);
@@ -2760,6 +3528,514 @@ function removeDuplicateRows() {
         }
       };
       reader.readAsText(file);
+    }
+
+    // ==============================================
+    // CARDIO / TREADMILL VIEW & LOGIC
+    // ==============================================
+    function initCardioFormDefaults() {
+      const dateEl = document.getElementById('cardio-date');
+      const timeEl = document.getElementById('cardio-time');
+      if (dateEl && !dateEl.value) dateEl.value = getLocalDateStr();
+      if (timeEl && !timeEl.value) timeEl.value = getLocalTimeStr();
+      renderCardioTypeChips();
+      updateCardioLivePreview();
+    }
+
+    function renderCardioTypeChips() {
+      const container = document.getElementById('cardio-type-chips');
+      const customWrap = document.getElementById('cardio-custom-name-wrap');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const options = DEFAULT_CARDIO_TYPES.concat([{ id: 'custom', name: '직접 입력', icon: '✏️' }]);
+      options.forEach(opt => {
+        const isActive = state.cardioSelectedType === opt.name;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = isActive
+          ? 'px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#3182F6] text-white border border-[#3182F6] shadow-sm transition-all flex items-center gap-1'
+          : 'px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-all flex items-center gap-1';
+        btn.innerHTML = `<span>${opt.icon}</span><span>${opt.name}</span>`;
+        btn.addEventListener('click', () => {
+          state.cardioSelectedType = opt.name;
+          renderCardioTypeChips();
+          if (opt.name === '직접 입력') {
+            const customInput = document.getElementById('cardio-custom-name');
+            if (customInput) customInput.focus();
+          }
+        });
+        container.appendChild(btn);
+      });
+
+      if (customWrap) {
+        if (state.cardioSelectedType === '직접 입력') {
+          customWrap.classList.remove('hidden');
+        } else {
+          customWrap.classList.add('hidden');
+        }
+      }
+    }
+
+    function setCardioMode(mode) {
+      state.cardioMode = mode;
+      const btnManual = document.getElementById('btn-cardio-mode-manual');
+      const btnTimer = document.getElementById('btn-cardio-mode-timer');
+      const panel = document.getElementById('cardio-live-timer-panel');
+
+      if (btnManual && btnTimer) {
+        if (mode === 'manual') {
+          btnManual.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#3182F6] text-white transition-all';
+          btnTimer.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all';
+        } else {
+          btnTimer.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#3182F6] text-white transition-all';
+          btnManual.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all';
+        }
+      }
+
+      if (panel) {
+        if (mode === 'timer') panel.classList.remove('hidden');
+        else panel.classList.add('hidden');
+      }
+    }
+
+    function updateCardioLivePreview() {
+      const dist = parseFloat((document.getElementById('cardio-distance') || {}).value) || 0;
+      const min = parseFloat((document.getElementById('cardio-min') || {}).value) || 0;
+      const sec = parseFloat((document.getElementById('cardio-sec') || {}).value) || 0;
+      const hr = parseInt((document.getElementById('cardio-hr') || {}).value, 10) || 0;
+
+      const totalSec = Math.max(0, min * 60 + sec);
+      const paceEl = document.getElementById('cardio-preview-pace');
+      const speedEl = document.getElementById('cardio-preview-speed');
+      const hrEl = document.getElementById('cardio-preview-hr-zone');
+
+      if (paceEl) {
+        paceEl.textContent = (dist > 0 && totalSec > 0) ? formatPace(totalSec / dist) : '-';
+      }
+      if (speedEl) {
+        const speed = (dist > 0 && totalSec > 0) ? (dist / (totalSec / 3600)) : 0;
+        speedEl.textContent = speed > 0 ? `${speed.toFixed(1)} km/h` : '-';
+      }
+      if (hrEl) {
+        const zone = getHeartRateZone(hr);
+        if (zone) {
+          hrEl.textContent = zone.label;
+          hrEl.className = 'text-[11px] font-bold text-rose-500';
+        } else {
+          hrEl.textContent = '미입력';
+          hrEl.className = 'text-[11px] font-bold text-[var(--text-muted)]';
+        }
+      }
+    }
+
+    function getCardioStopwatchElapsedMs() {
+      return state.cardioTimerAccumulatedMs + (state.cardioTimerRunning && state.cardioTimerStartMs ? (Date.now() - state.cardioTimerStartMs) : 0);
+    }
+
+    function updateCardioStopwatchDisplay() {
+      const display = document.getElementById('cardio-stopwatch-display');
+      if (!display) return;
+      const totalMs = Math.max(0, getCardioStopwatchElapsedMs());
+      const totalTenths = Math.floor(totalMs / 100);
+      const tenths = totalTenths % 10;
+      const wholeSec = Math.floor(totalTenths / 10);
+      const mins = Math.floor(wholeSec / 60);
+      const secs = wholeSec % 60;
+      display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${tenths}`;
+    }
+
+    function toggleCardioStopwatch() {
+      initAudio();
+      const btn = document.getElementById('btn-cardio-sw-toggle');
+      const status = document.getElementById('cardio-stopwatch-status');
+
+      if (state.cardioTimerRunning) {
+        state.cardioTimerAccumulatedMs += (Date.now() - state.cardioTimerStartMs);
+        state.cardioTimerStartMs = null;
+        state.cardioTimerRunning = false;
+        if (state.cardioTimerInterval) {
+          clearInterval(state.cardioTimerInterval);
+          state.cardioTimerInterval = null;
+        }
+        if (state.step !== 'active' && state.step !== 'rest') {
+          releaseWakeLock();
+        }
+        updateCardioStopwatchDisplay();
+        if (btn) btn.textContent = '▶ 재개';
+        if (status) status.textContent = '일시정지';
+      } else {
+        state.cardioTimerStartMs = Date.now();
+        state.cardioTimerRunning = true;
+        requestWakeLock();
+        if (state.cardioTimerInterval) clearInterval(state.cardioTimerInterval);
+        state.cardioTimerInterval = setInterval(updateCardioStopwatchDisplay, 100);
+        updateCardioStopwatchDisplay();
+        if (btn) btn.textContent = '⏸ 일시정지';
+        if (status) status.textContent = '측정 중 · 화면 꺼짐 방지 활성화';
+      }
+    }
+
+    function applyCardioStopwatchToForm() {
+      const totalMs = getCardioStopwatchElapsedMs();
+      const totalSec = Math.round(totalMs / 100) / 10;
+      if (totalSec <= 0) {
+        showToast('측정된 시간이 없습니다.', false);
+        return;
+      }
+      const mins = Math.floor(totalSec / 60);
+      const secs = Math.round((totalSec % 60) * 10) / 10;
+      const minEl = document.getElementById('cardio-min');
+      const secEl = document.getElementById('cardio-sec');
+      if (minEl) minEl.value = mins;
+      if (secEl) secEl.value = secs;
+      updateCardioLivePreview();
+      showToast(`측정 시간(${formatCardioDuration(totalSec)})이 적용되었어요!`, true);
+    }
+
+    function resetCardioStopwatch() {
+      if (state.cardioTimerInterval) {
+        clearInterval(state.cardioTimerInterval);
+        state.cardioTimerInterval = null;
+      }
+      state.cardioTimerRunning = false;
+      state.cardioTimerStartMs = null;
+      state.cardioTimerAccumulatedMs = 0;
+      if (state.step !== 'active' && state.step !== 'rest') {
+        releaseWakeLock();
+      }
+      const display = document.getElementById('cardio-stopwatch-display');
+      const status = document.getElementById('cardio-stopwatch-status');
+      const btn = document.getElementById('btn-cardio-sw-toggle');
+      if (display) display.textContent = '00:00.0';
+      if (status) status.textContent = '대기 중';
+      if (btn) btn.textContent = '▶ 시작';
+    }
+
+    function handleSaveCardio(e) {
+      e.preventDefault();
+      initAudio();
+
+      let exName = state.cardioSelectedType || '러닝머신';
+      if (exName === '직접 입력') {
+        const customInput = document.getElementById('cardio-custom-name');
+        const customVal = customInput ? customInput.value.trim() : '';
+        if (!customVal) {
+          showToast('종목명을 입력해 주세요.', false);
+          if (customInput) customInput.focus();
+          return;
+        }
+        exName = customVal;
+      }
+
+      const dateVal = (document.getElementById('cardio-date') || {}).value || getLocalDateStr();
+      const timeVal = (document.getElementById('cardio-time') || {}).value || getLocalTimeStr();
+      const distVal = Math.round((parseFloat((document.getElementById('cardio-distance') || {}).value) || 0) * 100) / 100;
+      const minVal = parseFloat((document.getElementById('cardio-min') || {}).value) || 0;
+      const secVal = parseFloat((document.getElementById('cardio-sec') || {}).value) || 0;
+      const durationSec = Math.round(Math.max(0, minVal * 60 + secVal) * 10) / 10;
+      const hrRaw = parseInt((document.getElementById('cardio-hr') || {}).value, 10) || 0;
+      const notesVal = ((document.getElementById('cardio-notes') || {}).value || '').trim();
+
+      if (distVal <= 0 && durationSec <= 0) {
+        showToast('거리 또는 지속 시간을 입력해 주세요.', false);
+        return;
+      }
+
+      if (hrRaw > 0 && (hrRaw < 30 || hrRaw > 250)) {
+        showToast('평균 심박수는 30~250 bpm 사이로 입력해 주세요.', false);
+        return;
+      }
+
+      const paceSecPerKm = (distVal > 0 && durationSec > 0) ? Math.round(durationSec / distVal) : 0;
+      const avgSpeedKmh = (distVal > 0 && durationSec > 0) ? Math.round((distVal / (durationSec / 3600)) * 10) / 10 : 0;
+      const isEdit = Boolean(state.editingCardioId);
+
+      const session = {
+        id: isEdit ? state.editingCardioId : 'cardio_' + Date.now(),
+        type: 'cardio',
+        date: dateVal,
+        time: timeVal,
+        exercise: exName,
+        category: '유산소',
+        distanceKm: distVal,
+        durationSec: durationSec,
+        duration: formatCardioDuration(durationSec),
+        durationHms: formatDurationHMS(durationSec),
+        avgHr: hrRaw > 0 ? hrRaw : null,
+        paceSecPerKm: paceSecPerKm,
+        avgSpeedKmh: avgSpeedKmh,
+        notes: notesVal,
+        totalSets: 1,
+        totalVolume: 0,
+        maxWeight: 0,
+        estimated1RM: 0,
+        synced: false,
+        sets: []
+      };
+
+      if (isEdit) {
+        const idx = state.history.findIndex(h => h.id === state.editingCardioId);
+        if (idx >= 0) state.history[idx] = session;
+        else state.history.unshift(session);
+      } else {
+        state.history.unshift(session);
+      }
+
+      sortHistoryDesc();
+      saveHistory();
+      cancelEditCardio();
+      renderCardioView();
+      if (state.view === 'history') renderHistoryView();
+
+      showToast(isEdit ? '유산소 기록이 수정되었어요! ✓' : '유산소 기록이 저장되었어요! 🏃', true);
+
+      if (!isEdit && state.gasWebhookUrl) {
+        sendWorkoutToGoogleSheets(session, false);
+      }
+    }
+
+    function startEditCardio(id) {
+      const target = state.history.find(h => h.id === id);
+      if (!target) return;
+
+      state.editingCardioId = id;
+      const isPreset = DEFAULT_CARDIO_TYPES.some(t => t.name === target.exercise);
+      if (isPreset) {
+        state.cardioSelectedType = target.exercise;
+      } else {
+        state.cardioSelectedType = '직접 입력';
+        const customInput = document.getElementById('cardio-custom-name');
+        if (customInput) customInput.value = target.exercise || '';
+      }
+      renderCardioTypeChips();
+
+      const dateEl = document.getElementById('cardio-date');
+      const timeEl = document.getElementById('cardio-time');
+      const distEl = document.getElementById('cardio-distance');
+      const minEl = document.getElementById('cardio-min');
+      const secEl = document.getElementById('cardio-sec');
+      const hrEl = document.getElementById('cardio-hr');
+      const notesEl = document.getElementById('cardio-notes');
+
+      if (dateEl) dateEl.value = normalizeSheetDate(target.date) || getLocalDateStr();
+      if (timeEl) timeEl.value = normalizeSheetTime(target.time) || getLocalTimeStr();
+      if (distEl) distEl.value = target.distanceKm > 0 ? target.distanceKm : '';
+
+      const totalSec = Number(target.durationSec) || parseCardioDurationStr(target.duration);
+      if (minEl) minEl.value = totalSec > 0 ? Math.floor(totalSec / 60) : '';
+      if (secEl) secEl.value = totalSec > 0 ? (Math.round((totalSec % 60) * 10) / 10) : '';
+      if (hrEl) hrEl.value = target.avgHr || '';
+      if (notesEl) notesEl.value = target.notes || '';
+
+      const saveBtn = document.getElementById('btn-save-cardio');
+      const cancelBtn = document.getElementById('btn-cancel-cardio-edit');
+      if (saveBtn) saveBtn.innerHTML = '<span>✓ 수정 내용 저장</span>';
+      if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+      updateCardioLivePreview();
+
+      const card = document.getElementById('cardio-entry-card');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function cancelEditCardio() {
+      state.editingCardioId = null;
+      ['cardio-distance', 'cardio-min', 'cardio-sec', 'cardio-hr', 'cardio-notes', 'cardio-custom-name'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      const dateEl = document.getElementById('cardio-date');
+      const timeEl = document.getElementById('cardio-time');
+      if (dateEl) dateEl.value = getLocalDateStr();
+      if (timeEl) timeEl.value = getLocalTimeStr();
+
+      const saveBtn = document.getElementById('btn-save-cardio');
+      const cancelBtn = document.getElementById('btn-cancel-cardio-edit');
+      if (saveBtn) saveBtn.innerHTML = '<span>✓ 유산소 기록 저장하기</span>';
+      if (cancelBtn) cancelBtn.classList.add('hidden');
+
+      updateCardioLivePreview();
+    }
+
+    function deleteCardioSession(id) {
+      if (state.editingCardioId === id) cancelEditCardio();
+      state.history = state.history.filter(h => h.id !== id);
+      saveHistory();
+      renderCardioView();
+      if (state.view === 'history') renderHistoryView();
+      showToast('유산소 기록이 삭제되었어요.', false);
+    }
+
+    function renderCardioCardHtml(h, options = { showActions: true }) {
+      const distNum = Number(h.distanceKm) || 0;
+      const durSec = Number(h.durationSec) || parseCardioDurationStr(h.duration);
+      const distText = distNum > 0 ? `${distNum.toFixed(2)} km` : '-';
+      const durText = h.duration || (durSec > 0 ? formatCardioDuration(durSec) : '-');
+      const hrNum = parseInt(h.avgHr, 10) || 0;
+      const hrText = hrNum > 0 ? `${hrNum} bpm` : '-';
+      const paceSec = h.paceSecPerKm || ((distNum > 0 && durSec > 0) ? Math.round(durSec / distNum) : 0);
+      const speedKmh = h.avgSpeedKmh || ((distNum > 0 && durSec > 0) ? Math.round((distNum / (durSec / 3600)) * 10) / 10 : 0);
+      const hrZone = getHeartRateZone(hrNum);
+      const icon = getCardioIcon(h.exercise);
+      const safeId = escapeHtml(h.id);
+
+      const syncHtml = h.synced
+        ? `<span class="text-[9px] px-2 py-0.5 rounded-full bg-[#3182F6]/10 text-[#3182F6] border border-[#3182F6]/25 font-bold">✓ 시트</span>`
+        : `<button type="button" class="btn-cardio-sync text-[9px] px-2 py-0.5 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] font-bold transition-colors" data-id="${safeId}">☁️ 시트</button>`;
+
+      const actionsHtml = options && options.showActions
+        ? `<div class="flex items-center gap-1">
+            ${syncHtml}
+            <button type="button" class="btn-cardio-edit text-[10px] px-2 py-0.5 rounded-lg bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[#3182F6] border border-[var(--border-subtle)] font-semibold transition-colors" data-id="${safeId}">수정</button>
+            <button type="button" class="btn-cardio-delete text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-500 border border-rose-500/20 font-semibold transition-colors" data-id="${safeId}">삭제</button>
+          </div>`
+        : '';
+
+      return `
+        <div class="p-3.5 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <div class="w-8 h-8 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-sm shrink-0">${icon}</div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <h4 class="text-xs sm:text-sm font-black text-[var(--text-primary)] truncate">${escapeHtml(h.exercise)}</h4>
+                  <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25 font-bold shrink-0">유산소</span>
+                </div>
+                <span class="text-[10px] text-[var(--text-muted)] font-mono-num block">${escapeHtml(h.date)} ${escapeHtml(h.time || '')}</span>
+              </div>
+            </div>
+            ${hrZone ? `<span class="text-[9px] px-2 py-0.5 rounded-full border font-bold shrink-0 ${hrZone.cls}">Z${hrZone.zone}</span>` : ''}
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 pt-1">
+            <div class="bg-[var(--bg-surface)] rounded-xl p-2 border border-[var(--border-subtle)]">
+              <span class="text-[10px] text-[var(--text-muted)] block">거리</span>
+              <span class="font-mono-num text-sm sm:text-base font-black text-[var(--text-primary)]">${distText}</span>
+            </div>
+            <div class="bg-[var(--bg-surface)] rounded-xl p-2 border border-[var(--border-subtle)]">
+              <span class="text-[10px] text-[var(--text-muted)] block">지속 시간</span>
+              <span class="font-mono-num text-sm sm:text-base font-black text-[var(--text-primary)]">${durText}</span>
+            </div>
+            <div class="bg-[var(--bg-surface)] rounded-xl p-2 border border-[var(--border-subtle)]">
+              <span class="text-[10px] text-[var(--text-muted)] block">평균 심박수</span>
+              <span class="font-mono-num text-sm sm:text-base font-black ${hrNum > 0 ? 'text-rose-500' : 'text-[var(--text-muted)]'}">${hrText}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[var(--border-subtle)]/70">
+            <div class="flex items-center gap-2 text-[10px] font-mono-num text-[var(--text-secondary)]">
+              <span>페이스 <b class="text-[#3182F6]">${paceSec > 0 ? formatPace(paceSec) : '-'}</b></span>
+              <span>·</span>
+              <span>속도 <b class="text-[var(--text-primary)]">${speedKmh > 0 ? speedKmh.toFixed(1) + ' km/h' : '-'}</b></span>
+            </div>
+            ${actionsHtml}
+          </div>
+
+          ${h.notes ? `<p class="text-[11px] text-[var(--text-secondary)] bg-[var(--bg-surface)] px-2.5 py-1.5 rounded-lg border border-[var(--border-subtle)]">📝 ${escapeHtml(h.notes)}</p>` : ''}
+        </div>
+      `;
+    }
+
+    function bindCardioCardActions(container, switchToCardioOnEdit) {
+      if (!container) return;
+      container.querySelectorAll('.btn-cardio-sync').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = state.history.find(h => h.id === btn.dataset.id);
+          if (target) sendWorkoutToGoogleSheets(target, true);
+        });
+      });
+      container.querySelectorAll('.btn-cardio-edit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          if (switchToCardioOnEdit) switchView('cardio');
+          startEditCardio(id);
+        });
+      });
+      container.querySelectorAll('.btn-cardio-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+          deleteCardioSession(btn.dataset.id);
+        });
+      });
+    }
+
+    function renderCardioView() {
+      const allCardio = state.history.filter(isCardioSession);
+
+      // 7-day rolling window
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const start7 = new Date(today);
+      start7.setDate(today.getDate() - 6);
+
+      const weekSessions = allCardio.filter(h => {
+        if (!h.date) return false;
+        const d = parseLocalDate(h.date);
+        return d >= start7 && d <= today;
+      });
+
+      let weekKm = 0;
+      let weekSec = 0;
+      let hrSum = 0;
+      let hrCount = 0;
+      weekSessions.forEach(h => {
+        weekKm += (Number(h.distanceKm) || 0);
+        weekSec += (Number(h.durationSec) || parseCardioDurationStr(h.duration));
+        if (h.avgHr && h.avgHr > 0) {
+          hrSum += Number(h.avgHr);
+          hrCount++;
+        }
+      });
+
+      const rangeEl = document.getElementById('cardio-weekly-range');
+      const distEl = document.getElementById('cardio-week-distance');
+      const durEl = document.getElementById('cardio-week-duration');
+      const paceEl = document.getElementById('cardio-week-pace');
+      const hrEl = document.getElementById('cardio-week-hr');
+
+      if (rangeEl) {
+        const sLabel = `${start7.getMonth() + 1}. ${start7.getDate()}`;
+        const eLabel = `${today.getMonth() + 1}. ${today.getDate()}`;
+        rangeEl.textContent = `${sLabel} ~ ${eLabel} · ${weekSessions.length}활동`;
+      }
+      if (distEl) distEl.textContent = `${weekKm.toFixed(2)} km`;
+      if (durEl) {
+        const totalMins = Math.round(weekSec / 60);
+        if (weekSec <= 0) durEl.textContent = '0분';
+        else if (totalMins >= 60) durEl.textContent = `${Math.floor(totalMins / 60)}시간 ${totalMins % 60}분`;
+        else if (totalMins > 0) durEl.textContent = `${totalMins}분`;
+        else durEl.textContent = `${Math.round(weekSec)}초`;
+      }
+      if (paceEl) paceEl.textContent = (weekKm > 0 && weekSec > 0) ? formatPace(weekSec / weekKm) : '-';
+      if (hrEl) hrEl.textContent = hrCount > 0 ? `${Math.round(hrSum / hrCount)} bpm` : '-';
+
+      // Filter list
+      let filtered = allCardio;
+      if (state.cardioListFilter === '러닝머신') {
+        filtered = allCardio.filter(h => h.exercise === '러닝머신');
+      } else if (state.cardioListFilter === '야외 러닝') {
+        filtered = allCardio.filter(h => h.exercise === '야외 러닝');
+      } else if (state.cardioListFilter === 'OTHER') {
+        filtered = allCardio.filter(h => h.exercise !== '러닝머신' && h.exercise !== '야외 러닝');
+      }
+
+      const countEl = document.getElementById('cardio-list-count');
+      if (countEl) countEl.textContent = `${filtered.length}활동`;
+
+      const listEl = document.getElementById('cardio-activity-list');
+      if (!listEl) return;
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="text-center py-8 text-[var(--text-muted)] text-xs toss-card-subtle">
+            아직 기록된 유산소 활동이 없어요.<br>위 입력란에서 러닝머신이나 야외 러닝 기록을 남겨보세요!
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(h => renderCardioCardHtml(h, { showActions: true })).join('');
+      bindCardioCardActions(listEl, false);
     }
 
     function renderExerciseMgmtList() {
@@ -2801,9 +4077,66 @@ function removeDuplicateRows() {
     function initEvents() {
       initTheme();
       document.getElementById('tab-nav-workout').addEventListener('click', () => switchView('workout'));
+      document.getElementById('tab-nav-cardio').addEventListener('click', () => switchView('cardio'));
       document.getElementById('tab-nav-history').addEventListener('click', () => switchView('history'));
       document.getElementById('tab-nav-settings').addEventListener('click', () => switchView('settings'));
       document.getElementById('tab-nav-exercises').addEventListener('click', () => switchView('exercises'));
+
+      // Cardio Mode & Stopwatch Events
+      const btnCardioManual = document.getElementById('btn-cardio-mode-manual');
+      const btnCardioTimer = document.getElementById('btn-cardio-mode-timer');
+      if (btnCardioManual) btnCardioManual.addEventListener('click', () => setCardioMode('manual'));
+      if (btnCardioTimer) btnCardioTimer.addEventListener('click', () => setCardioMode('timer'));
+
+      const btnSwToggle = document.getElementById('btn-cardio-sw-toggle');
+      const btnSwApply = document.getElementById('btn-cardio-sw-apply');
+      const btnSwReset = document.getElementById('btn-cardio-sw-reset');
+      if (btnSwToggle) btnSwToggle.addEventListener('click', toggleCardioStopwatch);
+      if (btnSwApply) btnSwApply.addEventListener('click', applyCardioStopwatchToForm);
+      if (btnSwReset) btnSwReset.addEventListener('click', resetCardioStopwatch);
+
+      const formCardioLog = document.getElementById('form-cardio-log');
+      if (formCardioLog) formCardioLog.addEventListener('submit', handleSaveCardio);
+
+      const btnCancelCardioEdit = document.getElementById('btn-cancel-cardio-edit');
+      if (btnCancelCardioEdit) btnCancelCardioEdit.addEventListener('click', cancelEditCardio);
+
+      ['cardio-distance', 'cardio-min', 'cardio-sec', 'cardio-hr'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateCardioLivePreview);
+      });
+
+      document.querySelectorAll('.cardio-dist-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const inp = document.getElementById('cardio-distance');
+          if (inp) inp.value = chip.dataset.km || '';
+          updateCardioLivePreview();
+        });
+      });
+
+      document.querySelectorAll('.cardio-min-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const minEl = document.getElementById('cardio-min');
+          const secEl = document.getElementById('cardio-sec');
+          if (minEl) minEl.value = chip.dataset.min || '';
+          if (secEl && secEl.value === '') secEl.value = '0';
+          updateCardioLivePreview();
+        });
+      });
+
+      const cardioFilterPills = document.querySelectorAll('.cardio-list-filter-pill');
+      cardioFilterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          cardioFilterPills.forEach(p => {
+            p.classList.remove('active', 'bg-[#3182F6]', 'text-white');
+            p.classList.add('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
+          });
+          pill.classList.add('active', 'bg-[#3182F6]', 'text-white');
+          pill.classList.remove('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
+          state.cardioListFilter = pill.dataset.filter || 'ALL';
+          renderCardioView();
+        });
+      });
 
       document.getElementById('btn-fetch-sheets').addEventListener('click', () => {
         fetchWorkoutHistoryFromSheets();
@@ -2824,11 +4157,11 @@ function removeDuplicateRows() {
       filterPills.forEach(pill => {
         pill.addEventListener('click', () => {
           filterPills.forEach(p => {
-            p.classList.remove('active', 'bg-[#3182F6]', 'text-[var(--text-primary)]');
-            p.classList.add('bg-slate-800', 'text-[var(--text-secondary)]');
+            p.classList.remove('active', 'bg-[#3182F6]', 'text-white', 'text-[var(--text-primary)]');
+            p.classList.add('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
           });
-          pill.classList.add('active', 'bg-[#3182F6]', 'text-[var(--text-primary)]');
-          pill.classList.remove('bg-slate-800', 'text-[var(--text-secondary)]');
+          pill.classList.add('active', 'bg-[#3182F6]', 'text-white');
+          pill.classList.remove('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
           state.activeCategory = pill.dataset.category;
           renderExerciseGrid();
         });
@@ -3053,12 +4386,28 @@ function removeDuplicateRows() {
       histFilterPills.forEach(pill => {
         pill.addEventListener('click', () => {
           histFilterPills.forEach(p => {
-            p.classList.remove('active', 'bg-[#3182F6]', 'text-[var(--text-primary)]');
-            p.classList.add('bg-slate-800', 'text-[var(--text-secondary)]');
+            p.classList.remove('active', 'bg-[#3182F6]', 'text-white', 'text-[var(--text-primary)]');
+            p.classList.add('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
           });
-          pill.classList.add('active', 'bg-[#3182F6]', 'text-[var(--text-primary)]');
-          pill.classList.remove('bg-slate-800', 'text-[var(--text-secondary)]');
+          pill.classList.add('active', 'bg-[#3182F6]', 'text-white');
+          pill.classList.remove('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
           state.historyPeriodFilter = pill.dataset.period || 'ALL';
+          state.historyCurrentPage = 1;
+          renderHistoryView();
+        });
+      });
+
+      // History Activity Type Filter Pills (전체 / 웨이트 / 유산소)
+      const histTypePills = document.querySelectorAll('.hist-type-pill');
+      histTypePills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          histTypePills.forEach(p => {
+            p.classList.remove('active', 'bg-[#3182F6]', 'text-white');
+            p.classList.add('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
+          });
+          pill.classList.add('active', 'bg-[#3182F6]', 'text-white');
+          pill.classList.remove('bg-[var(--bg-surface-subtle)]', 'text-[var(--text-secondary)]', 'border', 'border-[var(--border-subtle)]');
+          state.historyTypeFilter = pill.dataset.type || 'ALL';
           state.historyCurrentPage = 1;
           renderHistoryView();
         });
@@ -3097,7 +4446,7 @@ function removeDuplicateRows() {
       }
 
       document.getElementById('btn-sync-google-sheets').addEventListener('click', () => {
-        const curSession = state.history[0];
+        const curSession = state.history.find(h => h.id === state.lastCompletedSessionId) || state.history[0];
         if (curSession) {
           sendWorkoutToGoogleSheets(curSession, true);
         } else {
@@ -3134,18 +4483,44 @@ function removeDuplicateRows() {
       });
 
       document.getElementById('btn-copy-gas-code').addEventListener('click', () => {
-        const code = `// 1. 구글 시트에서 운동 기록 가져오기 (GET)
+        const code = `// 0. 날짜(YYYY-MM-DD) & 시간(24시간 HH:MM) 텍스트 정규화 헬퍼
+function normalizeDateYMD(val) {
+  var s = String(val || '').trim();
+  var m = s.match(/^(\\d{4})\\s*[-./]\\s*(\\d{1,2})\\s*[-./]\\s*(\\d{1,2})/);
+  if (!m) return s;
+  return m[1] + '-' + ('0' + parseInt(m[2], 10)).slice(-2) + '-' + ('0' + parseInt(m[3], 10)).slice(-2);
+}
+
+function normalizeTimeHHMM(val) {
+  var s = String(val || '').trim();
+  if (!s) return '';
+  var isPM = /(오후|PM)/i.test(s);
+  var isAM = /(오전|AM)/i.test(s);
+  var m = s.match(/(\\d{1,2})\\s*:\\s*(\\d{1,2})/);
+  if (!m) return s;
+  var hh = parseInt(m[1], 10);
+  var mm = parseInt(m[2], 10);
+  if (isNaN(hh) || isNaN(mm)) return s;
+  if (isPM && hh < 12) hh += 12;
+  else if (isAM && hh === 12) hh = 0;
+  return ('0' + hh).slice(-2) + ':' + ('0' + mm).slice(-2);
+}
+
+// 1. 구글 시트에서 운동 기록 가져오기 (GET)
 function doGet(e) {
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet(), sheet = ss.getSheetByName("운동 기록");
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("운동 기록");
     if (!sheet) return ContentService.createTextOutput(JSON.stringify({ result: "error" })).setMimeType(ContentService.MimeType.JSON);
-    var displayData = sheet.getDataRange().getDisplayValues(), rows = [];
+    var displayData = sheet.getDataRange().getDisplayValues();
+    var rows = [];
     for (var i = 0; i < displayData.length; i++) {
-      var row = displayData[i], d = String(row[0]||"").trim(), ex = String(row[2]||"").trim();
+      var row = displayData[i];
+      var d = normalizeDateYMD(row[0]), ex = String(row[2]||"").trim();
       if (!d || !ex || ex === "운동 종목" || d === "날짜") continue;
       if (/\\d{4}/.test(d)) {
         rows.push({
-          date: d, time: String(row[1]||"").trim(), exercise: ex,
+          date: d, time: normalizeTimeHHMM(row[1]), exercise: ex,
           setNum: parseInt(row[3],10)||1,
           targetWeight: parseFloat(String(row[4]).replace(/[^0-9.]/g,''))||0,
           targetReps: parseInt(String(row[5]).replace(/[^0-9]/g,''),10)||0,
@@ -3161,7 +4536,7 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
 }
-// 2. 구글 시트에 새 운동 기록 추가 (POST - 중복 방지 강화)
+// 2. 구글 시트에 새 운동 기록 추가 (POST - 중복 방지 강화 & 유산소 호환 & 로컬 텍스트 서식 고정)
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet(), sheet = ss.getSheetByName("운동 기록");
@@ -3170,11 +4545,16 @@ function doPost(e) {
       var displayData = sheet.getDataRange().getDisplayValues();
       var existingKeys = {}, lastRow = 7;
       
-      // 날짜/운동명/세트번호 정규화 키 생성 (셀 서식과 무관하게 100% 중복 차단)
-      function makeNormKey(dVal, exVal, setVal) {
-        var cleanDate = String(dVal || '').replace(/[^0-9]/g, '').substring(0, 8);
+      // 날짜/운동명/세트번호 정규화 키 생성 (유산소는 시간 포함으로 동일일 다회 기록 허용)
+      function makeNormKey(dVal, exVal, setVal, timeVal, noteVal) {
+        var cleanDate = normalizeDateYMD(dVal).replace(/[^0-9]/g, '').substring(0, 8);
         var cleanEx = String(exVal || '').replace(/\\s+/g, '');
         var cleanSet = parseInt(setVal, 10) || 1;
+        var isCardio = String(noteVal || '').indexOf('[유산소]') !== -1;
+        if (isCardio) {
+          var cleanTime = normalizeTimeHHMM(timeVal).replace(/[^0-9]/g, '').substring(0, 4);
+          return cleanDate + '__' + cleanEx + '__' + cleanTime + '__' + cleanSet;
+        }
         return cleanDate + '__' + cleanEx + '__' + cleanSet;
       }
 
@@ -3182,16 +4562,27 @@ function doPost(e) {
         var r = displayData[i];
         if (r[0] && /\\d{4}/.test(r[0]) && r[2] && r[2] !== "운동 종목") {
           lastRow = i + 1;
-          existingKeys[makeNormKey(r[0], r[2], r[3])] = true;
+          existingKeys[makeNormKey(r[0], r[2], r[3], r[1], r[10])] = true;
         }
       }
 
       data.rows.forEach(function(row) {
-        var k = makeNormKey(row[0], row[2], row[3]);
+        var rowCopy = row.slice();
+        rowCopy[0] = normalizeDateYMD(rowCopy[0]);
+        rowCopy[1] = normalizeTimeHHMM(rowCopy[1]);
+        var isCardio = String(rowCopy[10] || '').indexOf('[유산소]') !== -1;
+        var k = makeNormKey(rowCopy[0], rowCopy[2], rowCopy[3], rowCopy[1], rowCopy[10]);
         if (!existingKeys[k]) {
           lastRow++;
-          sheet.getRange(lastRow, 1, 1, row.length).setValues([row]);
-          sheet.getRange(lastRow, 9).setFormula("=G" + lastRow + "*H" + lastRow);
+          if (isCardio) {
+            sheet.getRange(lastRow, 10).setNumberFormat("@");
+          }
+          sheet.getRange(lastRow, 1, 1, rowCopy.length).setValues([rowCopy]);
+          sheet.getRange(lastRow, 1).setNumberFormat("yyyy-mm-dd");
+          sheet.getRange(lastRow, 2).setNumberFormat("HH:mm");
+          if (!isCardio) {
+            sheet.getRange(lastRow, 9).setFormula("=G" + lastRow + "*H" + lastRow);
+          }
           existingKeys[k] = true;
         }
       });
@@ -3201,6 +4592,7 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
 }
+
 // 3. 기존 시트 내 중복 데이터 1초 자동 삭제 매크로 함수
 function removeDuplicateRows() {
   var ss = SpreadsheetApp.getActiveSpreadsheet(), sheet = ss.getSheetByName("운동 기록");
@@ -3208,10 +4600,15 @@ function removeDuplicateRows() {
   var data = sheet.getDataRange().getDisplayValues();
   if (data.length <= 1) return;
 
-  function makeNormKey(dVal, exVal, setVal) {
-    var cleanDate = String(dVal || '').replace(/[^0-9]/g, '').substring(0, 8);
+  function makeNormKey(dVal, exVal, setVal, timeVal, noteVal) {
+    var cleanDate = normalizeDateYMD(dVal).replace(/[^0-9]/g, '').substring(0, 8);
     var cleanEx = String(exVal || '').replace(/\\s+/g, '');
     var cleanSet = parseInt(setVal, 10) || 1;
+    var isCardio = String(noteVal || '').indexOf('[유산소]') !== -1;
+    if (isCardio) {
+      var cleanTime = normalizeTimeHHMM(timeVal).replace(/[^0-9]/g, '').substring(0, 4);
+      return cleanDate + '__' + cleanEx + '__' + cleanTime + '__' + cleanSet;
+    }
     return cleanDate + '__' + cleanEx + '__' + cleanSet;
   }
 
@@ -3219,7 +4616,7 @@ function removeDuplicateRows() {
   for (var i = 0; i < data.length; i++) {
     var r = data[i], d = String(r[0] || '').trim(), ex = String(r[2] || '').trim();
     if (d && /\\d{4}/.test(d) && ex && ex !== "운동 종목") {
-      var key = makeNormKey(d, ex, r[3]);
+      var key = makeNormKey(d, ex, r[3], r[1], r[10]);
       if (seenKeys[key]) {
         rowsToDelete.push(i + 1);
       } else {
@@ -3228,6 +4625,7 @@ function removeDuplicateRows() {
     }
   }
 
+  // 아래 행부터 역순으로 안전하게 삭제
   for (var j = rowsToDelete.length - 1; j >= 0; j--) {
     sheet.deleteRow(rowsToDelete[j]);
   }
@@ -3290,6 +4688,7 @@ function removeDuplicateRows() {
         state.history = [];
         saveHistory();
         renderHistoryView();
+        renderCardioView();
         showToast('기록이 초기화되었습니다.', false);
       });
 
@@ -3299,16 +4698,34 @@ function removeDuplicateRows() {
           return;
         }
 
-        let csv = '날짜,시간,운동종목,카테고리,세트수,총볼륨(kg),소요시간\n';
+        const q = (val) => `"${String(val === undefined || val === null ? '' : val).replace(/"/g, '""')}"`;
+        let csv = '날짜,시간,운동종목,카테고리,세트수,총볼륨(kg),거리(km),평균심박수(bpm),평균페이스,소요시간,메모\n';
         state.history.forEach(h => {
-          csv += `"${h.date}","${h.time}","${h.exercise}","${h.category}",${h.totalSets},${h.totalVolume},"${h.duration}"\n`;
+          const cardio = isCardioSession(h);
+          const distStr = cardio && h.distanceKm > 0 ? Number(h.distanceKm).toFixed(2) : '';
+          const hrStr = cardio && h.avgHr > 0 ? String(h.avgHr) : '';
+          const paceStr = cardio && h.paceSecPerKm > 0 ? formatPace(h.paceSecPerKm) : '';
+          const memoStr = cardio ? (h.notes || '') : '';
+          csv += [
+            q(h.date),
+            q(h.time),
+            q(h.exercise),
+            q(h.category),
+            cardio ? 1 : (h.totalSets || 0),
+            cardio ? 0 : (h.totalVolume || 0),
+            q(distStr),
+            q(hrStr),
+            q(paceStr),
+            q(h.duration),
+            q(memoStr)
+          ].join(',') + '\n';
         });
 
         const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `웨이트_기록_${new Date().toISOString().split('T')[0]}.csv`;
+        a.download = `운동_기록_${getLocalDateStr()}.csv`;
         a.click();
         URL.revokeObjectURL(url);
         showToast('CSV 다운로드 완료', true);
@@ -3318,6 +4735,8 @@ function removeDuplicateRows() {
     window.addEventListener('DOMContentLoaded', () => {
       loadSavedData();
       renderExerciseGrid();
+      initCardioFormDefaults();
+      renderCardioView();
       initEvents();
       if (state.gasWebhookUrl) {
         fetchWorkoutHistoryFromSheets();

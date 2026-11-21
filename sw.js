@@ -1,5 +1,5 @@
 // Workout Coach PWA Service Worker
-const CACHE_NAME = 'workout-coach-v2';
+const CACHE_NAME = 'workout-coach-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
